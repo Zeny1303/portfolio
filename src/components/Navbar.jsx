@@ -49,7 +49,7 @@ export function SiteHeader({ onOpen, activePage, onNavigate }) {
         </button>
 
         <button className="menu-toggle-btn" onClick={onOpen}>
-          📖 Book View
+          MENU
         </button>
       </nav>
     </header>
@@ -101,7 +101,7 @@ export function NavPanel({ isOpen, onClose, onLinkClick }) {
 
         <div className="nav-panel-footer">
           <p>© {new Date().getFullYear()} Sneha — Software Engineer</p>
-          <p style={{ marginTop: '4px', opacity: 0.7 }}>Flip Book & Page Navigation</p>
+          <p style={{ marginTop: '4px', opacity: 0.7 }}>Full Stack Developer Portfolio</p>
         </div>
       </div>
     </div>

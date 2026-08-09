@@ -1,86 +1,356 @@
-/* ════════════════════════════════════════════════════════════
-   Home — hero section
-════════════════════════════════════════════════════════════ */
+/* =========================================================
+   HOME HERO
+   HOME → ABOUT TRANSITION
+========================================================= */
 
-.hero {
+.homeHero {
+  --background: #f5f3ee;
+  --text: #202020;
+  --blue: #220afa;
+
   position: relative;
+
+  width: 100%;
+  height: 100vh;
+
+  min-height: 700px;
+
   display: flex;
   align-items: center;
-  min-height: 100vh;
-  /* cream background from the original design */
-  background: #f5f3ee;
-  padding: 0 clamp(2rem, 5vw, 4rem);
+
+  padding: 0 clamp(2rem, 5vw, 5rem);
+
+  background: var(--background);
+
+  color: var(--text);
+
   overflow: hidden;
+
+  isolation: isolate;
 }
 
-/* ── Left: text ─────────────────────────────────────────── */
+
+/* =========================================================
+   LEFT TEXT
+========================================================= */
+
 .textCol {
   position: relative;
-  z-index: 2;
-  width: 50%;
-  flex-shrink: 0;
+
+  width: 52%;
+
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
 }
+
 
 .heading {
+  display: flex;
+
+  flex-direction: column;
+
+  margin: 0;
+
   font-family: 'Anton', sans-serif;
+
+  font-size: clamp(
+    4.5rem,
+    8vw,
+    8.5rem
+  );
+
   font-weight: 400;
-  font-size: clamp(4rem, 7.5vw, 8rem);
-  line-height: 1.08;
-  letter-spacing: -0.04em;
-  color: #252525;
+
+  line-height: 0.86;
+
+  letter-spacing: -0.055em;
+
   text-transform: uppercase;
+
+  color: #202020;
 }
 
-.line {
+
+.heading span {
   display: block;
 }
 
-/* ── Right: image ───────────────────────────────────────── */
+
+/* =========================================================
+   RIGHT IMAGE COLUMN
+========================================================= */
+
 .imageCol {
   position: relative;
-  z-index: 1;
-  flex: 1;
+
+  width: 48%;
+
+  height: 100%;
+
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100vh;
+
+  align-items: flex-end;
+
+  justify-content: center;
+
+  z-index: 10;
 }
 
+
+/* =========================================================
+   GIRL IMAGE
+========================================================= */
+
 .heroImg {
-  width: 100%;
-  min-width: 380px;
-  max-width: 600px;
+  position: relative;
+
+  z-index: 30;
+
+  display: block;
+
+  width: min(
+    100%,
+    650px
+  );
+
+  max-width: 650px;
+
+  height: auto;
+
+  max-height: 92vh;
+
   object-fit: contain;
-  /* slight upward nudge matching the -mt-10 in the original */
-  margin-top: -2.5rem;
-  /* keep image flush to the bottom */
-  align-self: flex-end;
+
+  object-position: bottom center;
+
+  user-select: none;
+
   pointer-events: none;
 }
 
-/* ── Responsive ─────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .hero {
-    flex-direction: column;
-    align-items: flex-start;
-    padding-top: 7rem;
-    padding-bottom: 0;
+
+/* =========================================================
+   SVG PATH
+========================================================= */
+
+.heroPath {
+  position: absolute;
+
+  /*
+    The SVG is positioned behind
+    the girl's image.
+  */
+
+  z-index: 15;
+
+  width: 100%;
+
+  height: 100%;
+
+  left: 0;
+
+  top: 0;
+
+  pointer-events: none;
+
+  overflow: visible;
+}
+
+
+.heroPath svg {
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  overflow: visible;
+}
+
+
+.heroPath path {
+  fill: none;
+
+  stroke: var(--blue);
+
+  stroke-width: 55px;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* =========================================================
+   SCROLL HINT
+========================================================= */
+
+.scrollHint {
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 1.8rem;
+
+  transform: translateX(-50%);
+
+  z-index: 50;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 0.4rem;
+
+  color: #66665f;
+
+  font-family: 'Geist Mono', monospace;
+
+  font-size: 0.65rem;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+
+  pointer-events: none;
+}
+
+
+.arrow {
+  font-size: 1.4rem;
+
+  animation: arrowFloat 1.5s ease-in-out infinite;
+}
+
+
+@keyframes arrowFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
   }
+
+  50% {
+    transform: translateY(7px);
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .homeHero {
+    padding: 0 2rem;
+  }
+
+
+  .heading {
+    font-size: clamp(
+      4rem,
+      8vw,
+      6.5rem
+    );
+  }
+
+
+  .heroImg {
+    width: 100%;
+
+    max-width: 520px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .homeHero {
+    min-height: 100svh;
+
+    height: 100svh;
+
+    padding: 5rem 1.5rem 0;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+  }
+
 
   .textCol {
     width: 100%;
+
+    height: auto;
+
+    z-index: 30;
   }
+
+
+  .heading {
+    font-size: clamp(
+      3.5rem,
+      15vw,
+      6rem
+    );
+
+    line-height: 0.88;
+  }
+
 
   .imageCol {
     width: 100%;
-    height: 60vw;
+
+    height: 55%;
+
     justify-content: center;
+
+    align-items: flex-end;
   }
 
+
   .heroImg {
-    min-width: unset;
-    max-width: 85vw;
-    margin-top: 0;
-    align-self: center;
+    width: 90%;
+
+    max-width: 420px;
+
+    max-height: 60vh;
   }
+
+
+  .heroPath {
+    width: 120%;
+
+    left: -10%;
+
+    height: 100%;
+  }
+
+
+  .heroPath path {
+    stroke-width: 42px;
+  }
+
+
+  .scrollHint {
+    bottom: 1rem;
+  }
+
 }

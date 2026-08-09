@@ -1,11 +1,12 @@
 /* =========================================================
-   SNEHA — MY JOURNEY (EDITORIAL GSAP SPOTLIGHT STYLE)
+   SNEHA PORTFOLIO — HERO + ABOUT CARD STACK OVERLAP LAYOUT
 ========================================================= */
 
 :root {
   --base-100: #fafaf0;
-  --base-200: #deded5;
+  --base-200: #f5f3ee;
   --base-300: #0f0f0f;
+  --about-bg-blue: #3b82b6;
 
   --blue: #220afa;
 
@@ -25,197 +26,200 @@
   --pink-decoration: #e6c9df;
 }
 
-/* Page Wrapper */
-.editorial-about-wrapper {
+/* Page Scroll Container */
+.home-about-container {
   width: 100%;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  background: var(--base-100);
+  background: var(--base-200);
   color: var(--base-300);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   position: relative;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Back Navigation Button */
-.journey-back-nav {
-  position: fixed;
-  top: 1.8rem;
-  left: 2rem;
-  z-index: 100;
-  font-family: 'Geist Mono', monospace;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--base-300);
-  background: rgba(250, 250, 240, 0.9);
-  border: 1px solid rgba(15, 15, 15, 0.12);
-  padding: 8px 18px;
-  border-radius: 30px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(8px);
-  transition: all 0.25s ease;
-}
-
-.journey-back-nav:hover {
-  background: var(--blue);
-  color: #ffffff;
-  border-color: var(--blue);
-  transform: translateY(-2px);
-}
-
-/* =========================================================
-   HERO SECTION
-========================================================= */
-
-.hero {
-  position: relative;
+/* 1. STICKY HOME HERO SECTION (Pins behind as user scrolls) */
+.home-hero-section {
+  position: sticky;
+  top: 0;
   width: 100%;
   height: 100vh;
-  padding: 2rem;
+  min-height: 650px;
   background: var(--base-200);
   display: flex;
-  justify-content: center;
   align-items: center;
+  padding: 0 clamp(2rem, 5vw, 5rem);
   overflow: hidden;
+  isolation: isolate;
+  z-index: 1;
 }
 
-.hero-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.hero-label {
-  margin-bottom: 1.5rem;
-  color: #66665f;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  font-family: 'Geist Mono', monospace;
-}
-
-.hero h1 {
-  font-family: 'Anton', sans-serif;
-  font-size: clamp(4rem, 9vw, 9rem);
-  line-height: 0.87;
-  letter-spacing: -0.05em;
-  font-weight: 500;
-  color: var(--base-300);
-  text-transform: uppercase;
-}
-
-.scroll-hint {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: #66665f;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-family: 'Geist Mono', monospace;
-}
-
-.arrow {
-  font-size: 1.4rem;
-  animation: arrowFloat 1.5s ease-in-out infinite;
-}
-
-@keyframes arrowFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(7px); }
-}
-
-/* =========================================================
-   SPOTLIGHT SECTION
-========================================================= */
-
-.spotlight {
+.home-text-col {
   position: relative;
+  width: 52%;
+  z-index: 20;
+}
+
+.home-heading {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(4.5rem, 8.5vw, 8.5rem);
+  font-weight: 400;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+  color: #202020;
+}
+
+.home-line {
+  display: block;
+}
+
+.home-image-col {
+  position: relative;
+  width: 48%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 10;
+}
+
+.home-hero-img {
+  position: relative;
+  z-index: 30;
+  display: block;
+  width: min(100%, 620px);
+  max-height: 92vh;
+  object-fit: contain;
+  object-position: bottom center;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 2. ABOUT SECTION CARD (BIGGER CARD TYPE SECTION SLIDING UP OVER HERO) */
+.about-section-card {
+  position: relative;
+  z-index: 10;
   width: 100%;
-  min-height: 450vh;
-  padding: 4rem 4rem 10rem;
-  overflow: hidden;
+  min-height: 420vh;
+  background-color: var(--base-100);
+  background-size: cover;
+  background-position: center top;
+  background-repeat: repeat-y;
+  image-rendering: -webkit-optimize-contrast;
+  border-radius: 40px 40px 0 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.12);
+  padding: 4rem 0 10rem;
+  overflow: visible;
   isolation: isolate;
 }
 
-/* =========================================================
-   SVG PATH
-========================================================= */
+/* Journey Title Header Inside About Card */
+.journey-title-section {
+  position: relative;
+  width: 100%;
+  padding: 3rem 2rem 4rem;
+  text-align: center;
+  z-index: 15;
+  overflow: hidden;
+}
 
-.spotlight .svg-path {
+.journey-bg-pattern {
   position: absolute;
   top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.journey-main-heading {
+  font-family: 'Georgia', 'Playfair Display', serif;
+  font-size: clamp(3.8rem, 8vw, 7.5rem);
+  font-style: italic;
+  font-weight: 700;
+  color: #fcfcfc;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  display: inline-block;
+  position: relative;
+}
+
+.journey-main-heading .word-y {
+  position: relative;
+  display: inline-block;
+}
+
+/* Continuous SVG Path Layer */
+.continuous-svg-layer {
+  position: absolute;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
-  width: 55%;
-  height: 100%;
-  z-index: 0;
+  width: 85%;
+  height: calc(100% - 40px);
+  z-index: 5;
   pointer-events: none;
   overflow: visible;
 }
 
-.spotlight .svg-path svg {
+.continuous-svg-layer svg {
   display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-#journey-path {
+#continuous-journey-path {
   fill: none;
-  stroke: var(--blue);
-  stroke-width: 60;
+  stroke: #ffffff;
+  stroke-width: 170px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-/* =========================================================
-   JOURNEY CONTAINER
-========================================================= */
-
-.journey {
+/* Spotlight Section Timeline */
+.spotlight-section {
   position: relative;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  z-index: 2;
+  padding: 1rem 4rem 10rem;
+  overflow: visible;
+  isolation: isolate;
+  z-index: 10;
 }
 
-/* =========================================================
-   JOURNEY ROW
-========================================================= */
+.journey-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  z-index: 15;
+}
 
 .journey-row {
   position: relative;
   width: 100%;
-  min-height: 85vh;
+  min-height: 80vh;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px minmax(0, 1fr);
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  column-gap: 4rem;
-  margin-bottom: 4rem;
+  column-gap: 5rem;
+  margin-bottom: 3rem;
 }
 
-/* =========================================================
-   CONTENT ALIGNMENT
-========================================================= */
-
 .journey-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.15rem;
+  z-index: 20;
 }
 
 .left-row .journey-content {
@@ -225,63 +229,27 @@
 }
 
 .right-row .journey-content {
-  grid-column: 3;
+  grid-column: 2;
   align-items: flex-start;
   text-align: left;
 }
 
-/* =========================================================
-   YEAR
-========================================================= */
-
 .year {
-  color: #707069;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   font-family: 'Geist Mono', monospace;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .journey-row.active .year {
-  color: var(--blue);
+  color: #ffffff;
+  transform: scale(1.08);
 }
 
-/* =========================================================
-   CENTER MILESTONE POINT
-========================================================= */
-
-.journey-point {
-  grid-column: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 10;
-}
-
-.milestone-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--base-100);
-  border: 4px solid var(--blue);
-  box-shadow: 0 0 0 7px rgba(34, 10, 250, 0.08);
-  transform: scale(0.7);
-  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.journey-row.active .milestone-dot {
-  background: var(--blue);
-  transform: scale(1);
-  box-shadow: 0 0 0 9px rgba(34, 10, 250, 0.12);
-}
-
-/* =========================================================
-   JOURNEY CARD
-========================================================= */
-
+/* Journey Cards */
 .journey-card {
   position: relative;
   width: min(480px, 100%);
@@ -293,6 +261,7 @@
   opacity: 0;
   transform: translateY(60px);
   will-change: transform, opacity;
+  z-index: 25;
   transition: box-shadow 0.4s ease;
 }
 
@@ -300,7 +269,6 @@
   box-shadow: 0 30px 80px rgba(15, 15, 15, 0.13);
 }
 
-/* Card Decorative Corner Bubble */
 .journey-card::before {
   content: "";
   position: absolute;
@@ -317,48 +285,26 @@
   z-index: 2;
 }
 
-/* Card Color Variants */
-.card-purple {
-  background: var(--purple-card);
-}
-.card-purple::before {
-  background: var(--purple-decoration);
-}
+.card-purple { background: var(--purple-card); }
+.card-purple::before { background: var(--purple-decoration); }
 
-.card-green {
-  background: var(--green-card);
-}
-.card-green::before {
-  background: var(--green-decoration);
-}
+.card-green { background: var(--green-card); }
+.card-green::before { background: var(--green-decoration); }
 
-.card-orange {
-  background: var(--orange-card);
-}
-.card-orange::before {
-  background: var(--orange-decoration);
-}
+.card-orange { background: var(--orange-card); }
+.card-orange::before { background: var(--orange-decoration); }
 
-.card-blue {
-  background: var(--blue-card);
-}
-.card-blue::before {
-  background: var(--blue-decoration);
-}
+.card-blue { background: var(--blue-card); }
+.card-blue::before { background: var(--blue-decoration); }
 
-.card-pink {
-  background: var(--pink-card);
-}
-.card-pink::before {
-  background: var(--pink-decoration);
-}
+.card-pink { background: var(--pink-card); }
+.card-pink::before { background: var(--pink-decoration); }
 
-/* Card Elements */
 .card-label {
   display: inline-flex;
   width: fit-content;
   padding: 0.42rem 0.75rem;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
   border-radius: 999px;
   background: var(--blue);
   color: white;
@@ -372,10 +318,10 @@
   font-family: 'Anton', sans-serif;
   max-width: 430px;
   margin-bottom: 0.8rem;
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  font-weight: 500;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+  font-weight: 400;
   color: var(--base-300);
 }
 
@@ -392,11 +338,10 @@
   font-weight: 700;
 }
 
-/* Experience Box */
 .experience {
   width: 100%;
-  margin: 1.2rem 0;
-  padding: 1rem 0;
+  margin: 1.4rem 0;
+  padding: 1.2rem 0;
   border-top: 1px solid rgba(15, 15, 15, 0.12);
   border-bottom: 1px solid rgba(15, 15, 15, 0.12);
 }
@@ -415,7 +360,6 @@
   line-height: 1.5;
 }
 
-/* Tech Stack Tags */
 .tech-stack {
   display: flex;
   flex-wrap: wrap;
@@ -434,7 +378,6 @@
   font-family: 'Geist Mono', monospace;
 }
 
-/* Ending */
 .ending {
   margin-top: 1.8rem;
   padding-top: 1.4rem;
@@ -445,101 +388,71 @@
   font-weight: 600;
 }
 
-/* =========================================================
-   TABLET & MOBILE RESPONSIVENESS
-========================================================= */
-
+/* RESPONSIVE */
 @media (max-width: 1000px) {
-  .spotlight {
+  .home-hero-section {
     padding: 0 2rem;
   }
-
-  .journey-row {
-    grid-template-columns: minmax(0, 1fr) 100px minmax(0, 1fr);
-    column-gap: 2rem;
+  .about-section-card {
+    border-radius: 28px 28px 0 0;
   }
-
+  .spotlight-section {
+    padding: 2rem 2rem 6rem;
+  }
+  .journey-row {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .left-row .journey-content,
+  .right-row .journey-content {
+    grid-column: 1;
+    align-items: center;
+    text-align: center;
+  }
   .journey-card {
     padding: 2rem;
   }
-
-  .spotlight .svg-path {
-    width: 65%;
+  .continuous-svg-layer {
+    width: 90%;
   }
 }
 
 @media (max-width: 700px) {
-  .hero {
-    padding: 1.5rem;
+  .home-hero-section {
+    height: 100vh;
+    padding: 5rem 1.5rem 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
   }
-
-  .hero h1 {
-    font-size: clamp(3.5rem, 15vw, 6rem);
+  .about-section-card {
+    border-radius: 20px 20px 0 0;
   }
-
-  .spotlight {
-    padding: 0 1rem;
-    min-height: auto;
+  .home-text-col, .home-image-col {
+    width: 100%;
   }
-
-  .spotlight .svg-path {
-    left: 60px;
-    width: 80px;
+  .home-image-col {
+    height: 55%;
+  }
+  .home-hero-img {
+    width: 90%;
+    max-width: 420px;
+    max-height: 60vh;
+  }
+  .spotlight-section {
+    padding: 2rem 1rem 5rem;
+  }
+  .continuous-svg-layer {
+    left: 20px;
     transform: none;
-    top: 0;
-    height: 100%;
+    width: 60px;
   }
-
   .journey-row {
-    min-height: 100vh;
-    grid-template-columns: 45px 30px minmax(0, 1fr);
-    column-gap: 0.7rem;
+    grid-template-columns: 1fr;
     margin-bottom: 2rem;
   }
-
-  .left-row .journey-content,
-  .right-row .journey-content {
-    grid-column: 3;
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .left-row .journey-point,
-  .right-row .journey-point {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .year {
-    position: absolute;
-    left: 0;
-    top: 20%;
-    font-size: 0.58rem;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-  }
-
   .journey-card {
     width: 100%;
     padding: 1.5rem;
-    border-radius: 16px;
-  }
-
-  .journey-card h2 {
-    font-size: 1.9rem;
-  }
-
-  .journey-card p {
-    font-size: 0.84rem;
-  }
-
-  #journey-path {
-    stroke-width: 80;
-  }
-
-  .milestone-dot {
-    width: 15px;
-    height: 15px;
-    border-width: 3px;
   }
 }

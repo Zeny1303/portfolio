@@ -1,0 +1,58 @@
+/* ─── Global resets ───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --pad: 30px;
+  --ink: #000;
+  --paper: #f5f3ee;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: 'Anton', sans-serif;
+  background: var(--ink);
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* ── Home: main scrollable surface (used only on /) ── */
+.main-surface {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow-y: auto;
+  z-index: 1;
+  background: var(--paper);
+  will-change: transform;
+  scrollbar-width: none;
+}
+.main-surface::-webkit-scrollbar { display: none; }
+
+/* ── About, Work & Contact pages scroll freely ── */
+.about-page,
+.editorial-about-wrapper,
+.work-page,
+.contact-page {
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* ─── Mono utility ────────────────────────────────────────── */
+.mono {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: clamp(11px, 1.2vw, 14px);
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}

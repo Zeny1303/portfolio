@@ -1,0 +1,545 @@
+/* =========================================================
+   SNEHA — MY JOURNEY (EDITORIAL GSAP SPOTLIGHT STYLE)
+========================================================= */
+
+:root {
+  --base-100: #fafaf0;
+  --base-200: #deded5;
+  --base-300: #0f0f0f;
+
+  --blue: #220afa;
+
+  --purple-card: #e9e7ff;
+  --purple-decoration: #d5d1ff;
+
+  --green-card: #e7f2e9;
+  --green-decoration: #cce5d1;
+
+  --orange-card: #fff0dc;
+  --orange-decoration: #ffdbad;
+
+  --blue-card: #e7eaff;
+  --blue-decoration: #d0d4ff;
+
+  --pink-card: #f4e6f1;
+  --pink-decoration: #e6c9df;
+}
+
+/* Page Wrapper */
+.editorial-about-wrapper {
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--base-100);
+  color: var(--base-300);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Back Navigation Button */
+.journey-back-nav {
+  position: fixed;
+  top: 1.8rem;
+  left: 2rem;
+  z-index: 100;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--base-300);
+  background: rgba(250, 250, 240, 0.9);
+  border: 1px solid rgba(15, 15, 15, 0.12);
+  padding: 8px 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+}
+
+.journey-back-nav:hover {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  padding: 2rem;
+  background: var(--base-200);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-label {
+  margin-bottom: 1.5rem;
+  color: #66665f;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+}
+
+.hero h1 {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(4rem, 9vw, 9rem);
+  line-height: 0.87;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+  color: var(--base-300);
+  text-transform: uppercase;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #66665f;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+}
+
+.arrow {
+  font-size: 1.4rem;
+  animation: arrowFloat 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(7px); }
+}
+
+/* =========================================================
+   SPOTLIGHT SECTION
+========================================================= */
+
+.spotlight {
+  position: relative;
+  width: 100%;
+  min-height: 450vh;
+  padding: 4rem 4rem 10rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* =========================================================
+   SVG PATH
+========================================================= */
+
+.spotlight .svg-path {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.spotlight .svg-path svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+#journey-path {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 60;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* =========================================================
+   JOURNEY CONTAINER
+========================================================= */
+
+.journey {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  z-index: 2;
+}
+
+/* =========================================================
+   JOURNEY ROW
+========================================================= */
+
+.journey-row {
+  position: relative;
+  width: 100%;
+  min-height: 85vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 4rem;
+  margin-bottom: 4rem;
+}
+
+/* =========================================================
+   CONTENT ALIGNMENT
+========================================================= */
+
+.journey-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.left-row .journey-content {
+  grid-column: 1;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.right-row .journey-content {
+  grid-column: 3;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* =========================================================
+   YEAR
+========================================================= */
+
+.year {
+  color: #707069;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+  transition: color 0.3s ease;
+}
+
+.journey-row.active .year {
+  color: var(--blue);
+}
+
+/* =========================================================
+   CENTER MILESTONE POINT
+========================================================= */
+
+.journey-point {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+}
+
+.milestone-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--base-100);
+  border: 4px solid var(--blue);
+  box-shadow: 0 0 0 7px rgba(34, 10, 250, 0.08);
+  transform: scale(0.7);
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.journey-row.active .milestone-dot {
+  background: var(--blue);
+  transform: scale(1);
+  box-shadow: 0 0 0 9px rgba(34, 10, 250, 0.12);
+}
+
+/* =========================================================
+   JOURNEY CARD
+========================================================= */
+
+.journey-card {
+  position: relative;
+  width: min(480px, 100%);
+  padding: 2.5rem 2.7rem;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 15, 15, 0.06);
+  box-shadow: 0 20px 60px rgba(15, 15, 15, 0.07);
+  opacity: 0;
+  transform: translateY(60px);
+  will-change: transform, opacity;
+  transition: box-shadow 0.4s ease;
+}
+
+.journey-card:hover {
+  box-shadow: 0 30px 80px rgba(15, 15, 15, 0.13);
+}
+
+/* Card Decorative Corner Bubble */
+.journey-card::before {
+  content: "";
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  top: -70px;
+  right: -50px;
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+.journey-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Card Color Variants */
+.card-purple {
+  background: var(--purple-card);
+}
+.card-purple::before {
+  background: var(--purple-decoration);
+}
+
+.card-green {
+  background: var(--green-card);
+}
+.card-green::before {
+  background: var(--green-decoration);
+}
+
+.card-orange {
+  background: var(--orange-card);
+}
+.card-orange::before {
+  background: var(--orange-decoration);
+}
+
+.card-blue {
+  background: var(--blue-card);
+}
+.card-blue::before {
+  background: var(--blue-decoration);
+}
+
+.card-pink {
+  background: var(--pink-card);
+}
+.card-pink::before {
+  background: var(--pink-decoration);
+}
+
+/* Card Elements */
+.card-label {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.42rem 0.75rem;
+  margin-bottom: 0.6rem;
+  border-radius: 999px;
+  background: var(--blue);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  font-family: 'Geist Mono', monospace;
+}
+
+.journey-card h2 {
+  font-family: 'Anton', sans-serif;
+  max-width: 430px;
+  margin-bottom: 0.8rem;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  color: var(--base-300);
+}
+
+.journey-card p {
+  max-width: 450px;
+  margin-bottom: 0.7rem;
+  color: #55554f;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.journey-card strong {
+  color: var(--base-300);
+  font-weight: 700;
+}
+
+/* Experience Box */
+.experience {
+  width: 100%;
+  margin: 1.2rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(15, 15, 15, 0.12);
+  border-bottom: 1px solid rgba(15, 15, 15, 0.12);
+}
+
+.experience-title {
+  margin-bottom: 0.35rem;
+  color: var(--base-300);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.experience-company {
+  color: #74746d;
+  font-size: 0.75rem;
+  font-family: 'Geist Mono', monospace;
+  line-height: 1.5;
+}
+
+/* Tech Stack Tags */
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.tech-stack span {
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(15, 15, 15, 0.07);
+  color: #55554f;
+  font-size: 0.65rem;
+  font-weight: 600;
+  font-family: 'Geist Mono', monospace;
+}
+
+/* Ending */
+.ending {
+  margin-top: 1.8rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(15, 15, 15, 0.12);
+  color: var(--blue);
+  font-size: 1.3rem;
+  line-height: 1.1;
+  font-weight: 600;
+}
+
+/* =========================================================
+   TABLET & MOBILE RESPONSIVENESS
+========================================================= */
+
+@media (max-width: 1000px) {
+  .spotlight {
+    padding: 0 2rem;
+  }
+
+  .journey-row {
+    grid-template-columns: minmax(0, 1fr) 100px minmax(0, 1fr);
+    column-gap: 2rem;
+  }
+
+  .journey-card {
+    padding: 2rem;
+  }
+
+  .spotlight .svg-path {
+    width: 65%;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.5rem, 15vw, 6rem);
+  }
+
+  .spotlight {
+    padding: 0 1rem;
+    min-height: auto;
+  }
+
+  .spotlight .svg-path {
+    left: 60px;
+    width: 80px;
+    transform: none;
+    top: 0;
+    height: 100%;
+  }
+
+  .journey-row {
+    min-height: 100vh;
+    grid-template-columns: 45px 30px minmax(0, 1fr);
+    column-gap: 0.7rem;
+    margin-bottom: 2rem;
+  }
+
+  .left-row .journey-content,
+  .right-row .journey-content {
+    grid-column: 3;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .left-row .journey-point,
+  .right-row .journey-point {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .year {
+    position: absolute;
+    left: 0;
+    top: 20%;
+    font-size: 0.58rem;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .journey-card {
+    width: 100%;
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .journey-card h2 {
+    font-size: 1.9rem;
+  }
+
+  .journey-card p {
+    font-size: 0.84rem;
+  }
+
+  #journey-path {
+    stroke-width: 80;
+  }
+
+  .milestone-dot {
+    width: 15px;
+    height: 15px;
+    border-width: 3px;
+  }
+}

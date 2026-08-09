@@ -1,0 +1,125 @@
+/* ===========================
+   CONTAINER
+=========================== */
+
+.social-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 76px;
+  border: 3px solid #111;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: 0.12s ease;
+  user-select: none;
+  box-shadow: 5px 5px 0 #111;
+}
+
+/* ===========================
+   ICON
+=========================== */
+
+.social-icon {
+  font-size: 28px;
+}
+
+/* ===========================
+   COLOURS
+=========================== */
+
+.linkedin { background: #0A66C2; color: white; }
+.github   { background: #1f1f1f; color: white; }
+.email    { background: #EA4335; color: white; }
+
+/* ===========================
+   HOVER
+=========================== */
+
+.social-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 #111;
+}
+
+/* ===========================
+   PRESS
+=========================== */
+
+.social-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 0 #111;
+}
+
+/* ===========================
+   TABLET  ≤ 768px
+=========================== */
+
+@media (max-width: 768px) {
+  .social-container {
+    gap: 12px;
+  }
+
+  .social-btn {
+    height: 64px;
+    font-size: 15px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+
+  .social-icon {
+    font-size: 22px;
+  }
+}
+
+/* ===========================
+   MOBILE  ≤ 480px
+=========================== */
+
+@media (max-width: 480px) {
+  .social-container {
+    gap: 9px;
+  }
+
+  .social-btn {
+    height: 54px;
+    font-size: 12px;
+    gap: 8px;
+    letter-spacing: 1px;
+    border-radius: 12px;
+    border-width: 2px;
+    box-shadow: 4px 4px 0 #111;
+  }
+
+  .social-icon {
+    font-size: 18px;
+  }
+}
+
+/* ===========================
+   TINY  ≤ 360px
+   Hide text labels, icons only
+=========================== */
+
+@media (max-width: 360px) {
+  .social-btn span {
+    display: none;
+  }
+
+  .social-btn {
+    height: 50px;
+  }
+}

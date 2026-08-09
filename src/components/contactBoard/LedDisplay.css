@@ -1,0 +1,201 @@
+/* =========================================
+   LED / CRT DISPLAY — Twilight Meadow Theme
+   ========================================= */
+
+.led-display {
+  width: 100%;
+  height: 100%;
+  background: #090F1A;
+  border-radius: 18px;
+  border: 3px solid #1B263B;
+  padding: 10px 22px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+
+  /* Inset depth — recessed screen */
+  box-shadow:
+    inset 0 0 0 1px rgba(232, 160, 191, 0.1),
+    inset 0 2px 8px rgba(0,0,0,0.9),
+    inset 0 -2px 6px rgba(0,0,0,0.6),
+    0 6px 24px rgba(0,0,0,0.5);
+}
+
+/* ── Scanlines ── */
+.led-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.25) 3px,
+    rgba(0,0,0,0.25) 4px
+  );
+  pointer-events: none;
+  z-index: 2;
+  border-radius: inherit;
+}
+
+/* ── Moving scan beam ── */
+.led-beam {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(232, 160, 191, 0.04),
+    transparent
+  );
+  animation: beam-move 5s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes beam-move {
+  0%   { top: -40px; }
+  100% { top: 100%;  }
+}
+
+/* ── Mount flicker ── */
+.led-flicker {
+  animation: flicker 0.6s steps(2) forwards;
+}
+
+@keyframes flicker {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  40%  { opacity: 0; }
+  60%  { opacity: 1; }
+  80%  { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* ── Status bar ── */
+.led-statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 3;
+}
+
+.led-status-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.led-online-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #E8A0BF;
+  flex-shrink: 0;
+  box-shadow:
+    0 0 4px #E8A0BF,
+    0 0 10px rgba(232, 160, 191, 0.6);
+  animation: pulse-led 2s ease infinite;
+}
+
+@keyframes pulse-led {
+  0%, 100% { box-shadow: 0 0 4px #E8A0BF, 0 0 10px rgba(232, 160, 191, 0.5); }
+  50%       { box-shadow: 0 0 8px #E8A0BF, 0 0 20px rgba(232, 160, 191, 0.85); }
+}
+
+.led-online-text {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  color: #E8A0BF;
+  letter-spacing: 2px;
+}
+
+.led-status-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(245, 230, 202, 0.6);
+  font-size: 20px;
+}
+
+/* ── Center ── */
+.led-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 3;
+}
+
+.led-title {
+  font-family: "Silkscreen", monospace;
+  font-size: clamp(24px, 4vw, 50px);
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #F5E6CA;
+  text-align: center;
+  line-height: 1;
+  text-shadow:
+    0 0 8px rgba(245, 230, 202, 0.5),
+    0 0 20px rgba(232, 160, 191, 0.3);
+}
+
+.led-cursor {
+  display: inline-block;
+  margin-left: 4px;
+  opacity: 1;
+  animation: cur-blink 0.9s step-start infinite;
+  color: #E8A0BF;
+}
+
+@keyframes cur-blink {
+  50% { opacity: 0; }
+}
+
+/* ── Divider ── */
+.led-divider {
+  width: 100%;
+  border-top: 2px dotted rgba(232, 160, 191, 0.25);
+  position: relative;
+  z-index: 3;
+}
+
+/* ── Bottom ── */
+.led-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 3;
+}
+
+.led-subtitle {
+  font-family: "Silkscreen", monospace;
+  font-size: clamp(9px, 1.4vw, 15px);
+  letter-spacing: 2px;
+  color: #D1C7BD;
+  text-shadow: 0 0 8px rgba(245, 230, 202, 0.2);
+}
+
+.led-corner-icon {
+  font-size: 18px;
+  color: rgba(232, 160, 191, 0.4);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .led-display { padding: 8px 16px; border-radius: 14px; }
+  .led-title   { letter-spacing: 2px; }
+}
+
+@media (max-width: 480px) {
+  .led-display { padding: 6px 12px; border-radius: 12px; }
+  .led-title   { letter-spacing: 1px; }
+  .led-subtitle { letter-spacing: 1px; }
+}

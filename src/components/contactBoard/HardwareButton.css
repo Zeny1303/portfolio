@@ -1,0 +1,132 @@
+/* =========================================
+   HARDWARE BUTTON — Twilight Meadow Theme
+========================================= */
+
+.hw-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 72px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: "Silkscreen", monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  user-select: none;
+  overflow: hidden;
+  transition: box-shadow 0.1s ease, transform 0.15s ease;
+  outline: 1.5px solid rgba(232, 160, 191, 0.3);
+}
+
+/* ── Shine overlay ── */
+.hw-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.15) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── Icon ── */
+.hw-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Label ── */
+.hw-label {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── LINKEDIN ── */
+.hw-linkedin {
+  background: linear-gradient(160deg, #1d4d7a 0%, #15395c 60%, #0d2742 100%);
+  color: #F5E6CA;
+  box-shadow:
+    0 1px 0 rgba(245, 230, 202, 0.2) inset,
+    0 -2px 0 rgba(0,0,0,0.4) inset,
+    0 5px 0 #081a2e,
+    0 8px 16px rgba(13, 39, 66, 0.4);
+}
+
+.hw-linkedin:hover {
+  background: linear-gradient(160deg, #245d94 0%, #1a4773 60%, #113354 100%);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(245, 230, 202, 0.2) inset,
+    0 -2px 0 rgba(0,0,0,0.4) inset,
+    0 7px 0 #081a2e,
+    0 12px 24px rgba(13, 39, 66, 0.55);
+}
+
+/* ── GITHUB ── */
+.hw-github {
+  background: linear-gradient(160deg, #1F2E47 0%, #152136 60%, #0E1626 100%);
+  color: #E8A0BF;
+  box-shadow:
+    0 1px 0 rgba(232, 160, 191, 0.25) inset,
+    0 -2px 0 rgba(0,0,0,0.5) inset,
+    0 5px 0 #080D17,
+    0 8px 16px rgba(14, 22, 38, 0.5);
+}
+
+.hw-github:hover {
+  background: linear-gradient(160deg, #273A59 0%, #1B2942 60%, #121C2E 100%);
+  color: #F5E6CA;
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(232, 160, 191, 0.3) inset,
+    0 -2px 0 rgba(0,0,0,0.5) inset,
+    0 7px 0 #080D17,
+    0 12px 24px rgba(14, 22, 38, 0.65);
+}
+
+/* ── EMAIL ── */
+.hw-email {
+  background: linear-gradient(160deg, #E8A0BF 0%, #d587a8 60%, #b86e8d 100%);
+  color: #0E1626;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.3) inset,
+    0 -2px 0 rgba(0,0,0,0.3) inset,
+    0 5px 0 #8c4965,
+    0 8px 16px rgba(232, 160, 191, 0.4);
+}
+
+.hw-email:hover {
+  background: linear-gradient(160deg, #f0b2cd 0%, #de93b4 60%, #c47a99 100%);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.35) inset,
+    0 -2px 0 rgba(0,0,0,0.3) inset,
+    0 7px 0 #8c4965,
+    0 12px 24px rgba(232, 160, 191, 0.55);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hw-btn    { height: 62px; font-size: 12px; gap: 10px; border-radius: 12px; }
+  .hw-icon   { font-size: 22px; }
+}
+
+@media (max-width: 520px) {
+  .hw-btn    { height: 52px; font-size: 11px; gap: 8px; border-radius: 10px; outline-width: 1.5px; }
+  .hw-icon   { font-size: 18px; }
+  .hw-label  { letter-spacing: 1px; }
+}
+
+@media (max-width: 360px) {
+  .hw-label  { display: none; }
+  .hw-btn    { gap: 0; }
+}

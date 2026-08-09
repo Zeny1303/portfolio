@@ -1,0 +1,166 @@
+.display-screen {
+  width: 100%;
+  height: 100%;
+  background: #090F1A;
+  border-radius: 20px;
+  border: 3px solid #1B263B;
+  padding: 4px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  color: #D1C7BD;
+  position: relative;
+  box-sizing: border-box;
+  box-shadow:
+    inset 0 0 18px rgba(232, 160, 191, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+/* ===========================
+   TOP STATUS BAR
+=========================== */
+
+.display-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-icon {
+  font-size: 28px;
+  color: #E8A0BF;
+}
+
+/* ===========================
+   MAIN TITLE
+=========================== */
+
+.display-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.display-title {
+  font-family: "Silkscreen", sans-serif;
+  font-size: clamp(26px, 4.5vw, 52px);
+  font-weight: 700;
+  letter-spacing: 3px;
+  line-height: 1.05;
+  text-align: center;
+  color: #F5E6CA;
+  text-shadow:
+    0 0 8px rgba(245, 230, 202, 0.45),
+    0 0 18px rgba(232, 160, 191, 0.25);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(-4px); }
+}
+
+/* ===========================
+   DIVIDER
+=========================== */
+
+.display-line {
+  width: 100%;
+  border-top: 3px dotted rgba(232, 160, 191, 0.35);
+}
+
+/* ===========================
+   SUBTITLE
+=========================== */
+
+.display-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 2px;
+}
+
+.display-subtitle {
+  font-family: "Silkscreen", sans-serif;
+  font-size: clamp(10px, 1.8vw, 18px);
+  letter-spacing: 2px;
+  color: #D1C7BD;
+  text-shadow: 0 0 6px rgba(245, 230, 202, 0.2);
+}
+
+/* ===========================
+   SCAN LINE ANIMATION
+=========================== */
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(232, 160, 191, 0.08);
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0%   { top: 0%; }
+  100% { top: 100%; }
+}
+
+/* ===========================
+   CURSOR BLINK
+=========================== */
+
+.cursor {
+  animation: blink 0.8s infinite;
+  color: #E8A0BF;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ===========================
+   TABLET  ≤ 768px
+=========================== */
+
+@media (max-width: 768px) {
+  .display-screen {
+    border-radius: 16px;
+    padding: 2px 16px;
+  }
+
+  .status-icon {
+    font-size: 22px;
+  }
+
+  .display-subtitle {
+    font-size: clamp(9px, 2vw, 14px);
+  }
+}
+
+/* ===========================
+   MOBILE  ≤ 480px
+=========================== */
+
+@media (max-width: 480px) {
+  .display-screen {
+    border-radius: 14px;
+    border-width: 3px;
+    padding: 2px 12px;
+  }
+
+  .status-icon {
+    font-size: 18px;
+  }
+
+  .display-title {
+    letter-spacing: 1px;
+  }
+
+  .display-subtitle {
+    letter-spacing: 1px;
+  }
+}

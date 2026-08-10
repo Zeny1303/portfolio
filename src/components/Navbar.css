@@ -16,12 +16,13 @@
 }
 
 .brand-logo {
-  font-family: 'Anton', sans-serif;
+  font-family: 'Chubbo', sans-serif;
   font-size: 1.6rem;
   letter-spacing: 0.05em;
   color: #111;
   text-decoration: none;
   cursor: pointer;
+  font-weight: 700;
 }
 
 .header-nav {

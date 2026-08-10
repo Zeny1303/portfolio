@@ -117,7 +117,7 @@ export default function Home() {
                   760 950,
                   700 1000
               "
-              stroke="#ffffff"
+              stroke="#F36B16"
               strokeWidth="200"
               strokeLinecap="round"
               strokeLinejoin="round"

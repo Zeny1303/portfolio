@@ -1,5 +1,5 @@
 /* =========================================
-   CONTACT FORM — Twilight Meadow Theme
+   CONTACT FORM — Warm Cream/Brownie Theme
 ========================================= */
 
 .contact-form {
@@ -28,23 +28,23 @@
   padding: 0 16px;
   border-radius: 13px;
   border: none;
-  outline: 1.5px solid rgba(232, 160, 191, 0.25);
-  background: linear-gradient(160deg, #131E30 0%, #0E1626 100%);
+  outline: 1.5px solid #895737;
+  background: linear-gradient(160deg, #5E3023 0%, #482319 100%);
   box-shadow:
-    0 1px 0 rgba(245, 230, 202, 0.08) inset,
+    0 1px 0 rgba(243, 233, 220, 0.08) inset,
     0 -1px 0 rgba(0,0,0,0.5) inset,
-    2px 2px 0 #090E1A,
+    2px 2px 0 #381A12,
     0 4px 10px rgba(0,0,0,0.25);
   transition: outline-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input-focused {
-  outline-color: #E8A0BF;
+  outline-color: #C08552;
   box-shadow:
-    0 1px 0 rgba(245, 230, 202, 0.15) inset,
+    0 1px 0 rgba(243, 233, 220, 0.15) inset,
     0 -1px 0 rgba(0,0,0,0.6) inset,
-    3px 3px 0 #060912,
-    0 0 12px rgba(232, 160, 191, 0.25);
+    3px 3px 0 #28120B,
+    0 0 12px rgba(192, 133, 82, 0.35);
 }
 
 /* ── Icon ── */
@@ -52,11 +52,11 @@
   flex-shrink: 0;
   margin-right: 12px;
   font-size: 17px;
-  color: #E8A0BF;
+  color: #C08552;
   transition: color 0.15s ease;
 }
 
-.input-focused .input-icon { color: #F5E6CA; }
+.input-focused .input-icon { color: #F3E9DC; }
 
 /* ── Input field ── */
 .input-box input {
@@ -67,10 +67,10 @@
   background: transparent;
   font-family: inherit;
   font-size: 14px;
-  color: #D1C7BD;
+  color: #F3E9DC;
 }
 
-.input-box input::placeholder { color: #8A8076; }
+.input-box input::placeholder { color: rgba(243, 233, 220, 0.55); }
 
 /* ── Message box ── */
 .message-box {
@@ -80,12 +80,12 @@
   box-sizing: border-box;
   border-radius: 14px;
   border: none;
-  outline: 1.5px solid rgba(232, 160, 191, 0.25);
-  background: linear-gradient(160deg, #131E30 0%, #0E1626 100%);
+  outline: 1.5px solid #895737;
+  background: linear-gradient(160deg, #5E3023 0%, #482319 100%);
   box-shadow:
-    0 1px 0 rgba(245, 230, 202, 0.08) inset,
+    0 1px 0 rgba(243, 233, 220, 0.08) inset,
     0 -1px 0 rgba(0,0,0,0.5) inset,
-    2px 2px 0 #090E1A,
+    2px 2px 0 #381A12,
     0 4px 10px rgba(0,0,0,0.25);
   overflow: hidden;
   transition: outline-color 0.15s ease, box-shadow 0.15s ease;
@@ -103,10 +103,10 @@
   background: transparent;
   font-family: inherit;
   font-size: 14px;
-  color: #D1C7BD;
+  color: #F3E9DC;
 }
 
-.message-box textarea::placeholder { color: #8A8076; }
+.message-box textarea::placeholder { color: rgba(243, 233, 220, 0.55); }
 
 /* ── Action buttons (mic + send) ── */
 .msg-actions {
@@ -127,24 +127,24 @@
   justify-content: center;
   border: none;
   border-radius: 10px;
-  outline: 1.5px solid rgba(232, 160, 191, 0.3);
-  background: linear-gradient(160deg, #1F2E47 0%, #152136 100%);
-  color: #E8A0BF;
+  outline: 1.5px solid #C08552;
+  background: linear-gradient(160deg, #895737 0%, #5E3023 100%);
+  color: #F3E9DC;
   cursor: pointer;
-  box-shadow: 2px 2px 0 #090E1A;
+  box-shadow: 2px 2px 0 #381A12;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .mic-btn:hover {
-  background: linear-gradient(160deg, #273A59 0%, #1B2942 100%);
-  color: #F5E6CA;
+  background: linear-gradient(160deg, #A66E3F 0%, #895737 100%);
+  color: #ffffff;
 }
 
 .mic-active {
-  background: linear-gradient(160deg, #E8A0BF 0%, #d880a6 100%);
-  color: #0E1626;
-  outline-color: #E8A0BF;
-  box-shadow: 1px 1px 0 #000;
+  background: linear-gradient(160deg, #C08552 0%, #A66E3F 100%);
+  color: #F3E9DC;
+  outline-color: #F3E9DC;
+  box-shadow: 1px 1px 0 #28120B;
 }
 
 /* ── Send button ── */
@@ -156,24 +156,24 @@
   justify-content: center;
   border: none;
   border-radius: 10px;
-  outline: 1.5px solid rgba(232, 160, 191, 0.4);
-  background: linear-gradient(160deg, #E8A0BF 0%, #d587a8 100%);
-  color: #0E1626;
+  outline: 1.5px solid #F3E9DC;
+  background: linear-gradient(160deg, #C08552 0%, #A66E3F 100%);
+  color: #F3E9DC;
   cursor: pointer;
   box-shadow:
     0 1px 0 rgba(255,255,255,0.3) inset,
-    2px 2px 0 #090E1A;
+    2px 2px 0 #381A12;
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .send-btn:hover {
-  background: #f0b2cd;
+  background: #D49661;
   transform: translateY(-1px);
 }
 
 .send-confirm {
   font-size: 18px;
-  color: #0E1626;
+  color: #F3E9DC;
 }
 
 /* ── Responsive ── */

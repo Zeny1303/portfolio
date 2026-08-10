@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { NavPanel, SiteHeader } from './Navbar'
 import heroImage from '../assests/HeroImage.png'
 import bkBg from '../assests/bk.png'
+import cloudsImg from '../assests/cloudss.png'
 import './AboutPage.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -15,6 +16,7 @@ export default function AboutPage() {
   const pathRef = useRef(null)
   const spotlightRef = useRef(null)
   const aboutCardRef = useRef(null)
+  const cloudLayerRef = useRef(null)
   const mainRef = useRef(null)
   const [navOpen, setNavOpen] = useState(false)
 
@@ -29,6 +31,7 @@ export default function AboutPage() {
       const path = pathRef.current
       const spotlight = spotlightRef.current
       const aboutCard = aboutCardRef.current
+      const cloudLayer = cloudLayerRef.current
       const rows = gsap.utils.toArray('.journey-row')
 
       if (!path || !containerRef.current || !spotlight) return
@@ -48,9 +51,9 @@ export default function AboutPage() {
         scrollTrigger: {
           trigger: spotlight,
           scroller: containerRef.current,
-          start: 'top 75%',
-          end: 'bottom 85%',
-          scrub: 1,
+          start: 'top 80%',
+          end: 'bottom 155%',
+          scrub: true, // 1:1 instant sync with user scroll speed (no catch-up delay)
           invalidateOnRefresh: true,
         },
       })
@@ -90,6 +93,23 @@ export default function AboutPage() {
           duration: 0.45,
           ease: 'power2.out',
           overwrite: true,
+        })
+      }
+
+      // Cloud parallax — clouds stay behind the title but drift subtly with scroll.
+      if (cloudLayer && aboutCard) {
+        gsap.to(cloudLayer, {
+          y: 140,
+          xPercent: 2,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: aboutCard,
+            scroller: containerRef.current,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: 1.2,
+            invalidateOnRefresh: true,
+          },
         })
       }
 
@@ -165,6 +185,18 @@ export default function AboutPage() {
 
           {/* 2. ABOUT SECTION CARD (SLIDES UP OVER HERO SECTION) */}
           <section className="about-section-card" ref={aboutCardRef} style={{ backgroundImage: `url(${bkBg})` }}>
+            {/* Decorative transparent cloud layer.
+                The PNG already has transparency, so it floats directly over the blue
+                background. z-index keeps it behind the Journey heading and timeline. */}
+            <div className="journey-cloud-layer" ref={cloudLayerRef} aria-hidden="true">
+              <img
+                src={cloudsImg}
+                alt=""
+                className="journey-cloud-image"
+                draggable="false"
+              />
+            </div>
+
             {/* Journey Title Header */}
             <div className="journey-title-section">
               <h2 className="journey-main-heading">
@@ -184,7 +216,7 @@ export default function AboutPage() {
                   id="continuous-journey-path"
                   ref={pathRef}
                   d="
-                  M 640 0
+                  M 960 20
 
                   C 640 220,
                     280 280,
@@ -209,13 +241,9 @@ export default function AboutPage() {
                   C 240 3770,
                     760 3750,
                     760 4150
-
-                  C 760 4420,
-                    500 4600,
-                    500 4900
                   "
-                  stroke="#ffffff"
-                  strokeWidth="170"
+                  stroke="#F36B16"
+                  strokeWidth="32"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />

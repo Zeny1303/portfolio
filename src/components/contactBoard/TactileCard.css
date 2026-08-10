@@ -1,5 +1,5 @@
 /* =========================================
-   TACTILE CARD — physical switch/tab (Twilight Meadow)
+   TACTILE CARD — Warm Cream/Brownie Palette Theme
    ========================================= */
 
 .tactile-card {
@@ -19,35 +19,35 @@
   padding: 12px 8px;
   box-sizing: border-box;
 
-  /* Machined dark slate look */
-  background: linear-gradient(160deg, #1B263B 0%, #152033 60%, #0E1626 100%);
-  outline: 1.5px solid rgba(232, 160, 191, 0.25);
+  /* Machined dark Brownie look */
+  background: linear-gradient(160deg, #5E3023 0%, #4A241A 60%, #381A12 100%);
+  outline: 1.5px solid #C08552;
   outline-offset: 0px;
 
   /* Outer bevel — raised hardware feel */
   box-shadow:
-    0 1px 0 rgba(245, 230, 202, 0.12) inset,     /* top highlight */
-    0 -1px 0 rgba(0,0,0,0.5) inset,              /* bottom shadow */
-    1px 0 0 rgba(232, 160, 191, 0.1) inset,      /* left highlight */
-    4px 4px 0 #080D17,                           /* hard drop-shadow */
-    0 6px 16px rgba(0,0,0,0.35);                 /* soft ambient */
+    0 1px 0 rgba(243, 233, 220, 0.18) inset,
+    0 -1px 0 rgba(0,0,0,0.5) inset,
+    1px 0 0 rgba(243, 233, 220, 0.1) inset,
+    4px 4px 0 #28120B,
+    0 6px 16px rgba(94, 48, 35, 0.35);
 
   transition: box-shadow 0.1s ease, background 0.15s ease, outline-color 0.15s ease;
 }
 
-/* ── Active state ── */
+/* ── Active state (Caramel active tab) ── */
 .tactile-active {
-  background: linear-gradient(160deg, #E8A0BF 0%, #d587a8 100%);
-  outline-color: #E8A0BF;
+  background: linear-gradient(160deg, #C08552 0%, #A66E3F 100%);
+  outline-color: #F3E9DC;
   box-shadow:
     0 1px 0 rgba(255,255,255,0.3) inset,
     0 -1px 0 rgba(0,0,0,0.4) inset,
-    2px 2px 0 #080D17,
-    0 4px 12px rgba(232, 160, 191, 0.35);
+    2px 2px 0 #28120B,
+    0 4px 12px rgba(192, 133, 82, 0.4);
 }
 
-.tactile-active .tc-label { color: #0E1626; font-weight: 800; }
-.tactile-active .tc-icon  { color: #0E1626; }
+.tactile-active .tc-label { color: #F3E9DC; font-weight: 800; }
+.tactile-active .tc-icon  { color: #F3E9DC; }
 
 /* ── Screws ── */
 .tc-screw {
@@ -55,8 +55,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #3B4D6C, #1B263B);
-  border: 1px solid rgba(232, 160, 191, 0.3);
+  background: radial-gradient(circle at 35% 35%, #895737, #5E3023);
+  border: 1px solid rgba(243, 233, 220, 0.3);
 }
 
 .tc-screw::before {
@@ -64,7 +64,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(245, 230, 202, 0.3) 0%, transparent 50%);
+  background: linear-gradient(135deg, rgba(243, 233, 220, 0.3) 0%, transparent 50%);
 }
 
 .tc-tl { top: 9px;    left: 9px;   }
@@ -80,15 +80,15 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #3B4D6C;
-  border: 1px solid rgba(232, 160, 191, 0.2);
+  background: #895737;
+  border: 1px solid rgba(243, 233, 220, 0.3);
 }
 
 .tc-led-on {
-  background: #E8A0BF;
+  background: #F3E9DC;
   box-shadow:
-    0 0 4px #E8A0BF,
-    0 0 10px rgba(232, 160, 191, 0.75);
+    0 0 4px #F3E9DC,
+    0 0 10px rgba(243, 233, 220, 0.75);
   animation: tc-pulse 2s ease infinite;
 }
 
@@ -106,7 +106,7 @@
 
 .tc-icon {
   font-size: 26px;
-  color: #E8A0BF;
+  color: #C08552;
   transition: color 0.15s ease;
 }
 
@@ -116,7 +116,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #F5E6CA;
+  color: #F3E9DC;
   transition: color 0.15s ease;
 }
 
@@ -137,7 +137,7 @@
     border-radius: 10px;
     padding: 8px 6px;
     outline-width: 1.5px;
-    box-shadow: 3px 3px 0 #080D17, 0 4px 10px rgba(0,0,0,0.25);
+    box-shadow: 3px 3px 0 #28120B, 0 4px 10px rgba(0,0,0,0.25);
   }
   .tc-screw { width: 6px; height: 6px; }
   .tc-tl { top: 6px;    left: 6px;   }

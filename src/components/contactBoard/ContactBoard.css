@@ -1,5 +1,5 @@
 /* =========================================
-   CONTACT BOARD — Retro Hardware Frame (Twilight Meadow Slate)
+   CONTACT BOARD — Warm Cream Palette Theme
    ========================================= */
 
 .contact-board {
@@ -10,20 +10,19 @@
   position: relative;
   border-radius: 26px;
 
-  /* Warm beige hardware gradient */
-  background:
-    linear-gradient(160deg, #F5ECD7 0%, #EFE3C8 40%, #E8D9B8 70%, #DFD0A8 100%);
+  /* Warm Cream & Caramel frame gradient */
+  background: linear-gradient(160deg, #F3E9DC 0%, #E8D9C5 40%, #DCBFA2 100%);
 
-  /* Depth: warm border + shadow */
-  outline: 2px solid rgba(180, 140, 90, 0.35);
+  /* Depth: Brownie / Coffee border & shadow */
+  outline: 2px solid #C08552;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 -1px 0 rgba(100, 70, 20, 0.2) inset,
+    0 -1px 0 rgba(94, 48, 35, 0.2) inset,
     1px 0 0 rgba(255, 255, 255, 0.6) inset,
-    0 6px 0 #C8B890,
-    0 10px 0 #B8A880,
-    0 28px 60px rgba(120, 90, 40, 0.25),
-    0 8px 20px rgba(100, 70, 20, 0.15);
+    0 6px 0 #895737,
+    0 10px 0 #5E3023,
+    0 28px 60px rgba(94, 48, 35, 0.25),
+    0 8px 20px rgba(94, 48, 35, 0.15);
 }
 
 /* ── Noise / grain texture ── */
@@ -45,11 +44,11 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 35%, #C8B890, #A89870 60%, #8A7A58);
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  background: radial-gradient(circle at 38% 35%, #C08552, #895737 60%, #5E3023);
+  border: 1.5px solid #F3E9DC;
   z-index: 10;
   box-shadow:
-    0 1px 3px rgba(100, 70, 20, 0.4),
+    0 1px 3px rgba(94, 48, 35, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -58,7 +57,7 @@
 .rivet::after {
   content: "";
   position: absolute;
-  background: rgba(100, 70, 20, 0.45);
+  background: rgba(94, 48, 35, 0.5);
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 1px;
@@ -116,11 +115,12 @@
   text-align: right;
   font-size: 10px;
   letter-spacing: 2.5px;
-  color: rgba(120, 90, 40, 0.5);
+  color: #895737;
   margin: 14px 4px 0;
   font-family: "Silkscreen", monospace;
   position: relative;
   z-index: 1;
+  font-weight: 700;
 }
 
 /* ============================================
@@ -133,7 +133,7 @@
     margin: 24px auto 0;
     padding: 20px 18px 16px;
     border-radius: 20px;
-    background: linear-gradient(160deg, #F5ECD7 0%, #EFE3C8 40%, #E8D9B8 100%);
+    background: linear-gradient(160deg, #F3E9DC 0%, #E8D9C5 40%, #DCBFA2 100%);
   }
 
   .board-layout {

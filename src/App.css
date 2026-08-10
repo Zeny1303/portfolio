@@ -1,3 +1,13 @@
+/* ─── Font Face Definitions ─────────────────────────────────── */
+@font-face {
+  font-family: 'Chubbo';
+  src: url('./assests/fonts/Chubbo-Bold.woff2') format('woff2'),
+       url('./assests/fonts/Chubbo-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ─── Global resets ───────────────────────────────────────── */
 *,
 *::before,
@@ -17,7 +27,7 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  font-family: 'Anton', sans-serif;
+  font-family: 'Chubbo', 'Anton', sans-serif;
   background: var(--ink);
 }
 

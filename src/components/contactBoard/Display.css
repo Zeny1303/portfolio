@@ -1,19 +1,19 @@
 .display-screen {
   width: 100%;
   height: 100%;
-  background: #090F1A;
+  background: #381A12;
   border-radius: 20px;
-  border: 3px solid #1B263B;
+  border: 3px solid #5E3023;
   padding: 4px 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  color: #D1C7BD;
+  color: #D8C3A5;
   position: relative;
   box-sizing: border-box;
   box-shadow:
-    inset 0 0 18px rgba(232, 160, 191, 0.08),
+    inset 0 0 18px rgba(192, 133, 82, 0.15),
     0 8px 20px rgba(0, 0, 0, 0.45);
 }
 
@@ -29,7 +29,7 @@
 
 .status-icon {
   font-size: 28px;
-  color: #E8A0BF;
+  color: #C08552;
 }
 
 /* ===========================
@@ -50,10 +50,10 @@
   letter-spacing: 3px;
   line-height: 1.05;
   text-align: center;
-  color: #F5E6CA;
+  color: #F3E9DC;
   text-shadow:
-    0 0 8px rgba(245, 230, 202, 0.45),
-    0 0 18px rgba(232, 160, 191, 0.25);
+    0 0 8px rgba(243, 233, 220, 0.45),
+    0 0 18px rgba(192, 133, 82, 0.25);
   animation: float 3s ease-in-out infinite;
 }
 
@@ -68,7 +68,7 @@
 
 .display-line {
   width: 100%;
-  border-top: 3px dotted rgba(232, 160, 191, 0.35);
+  border-top: 3px dotted rgba(192, 133, 82, 0.35);
 }
 
 /* ===========================
@@ -86,8 +86,8 @@
   font-family: "Silkscreen", sans-serif;
   font-size: clamp(10px, 1.8vw, 18px);
   letter-spacing: 2px;
-  color: #D1C7BD;
-  text-shadow: 0 0 6px rgba(245, 230, 202, 0.2);
+  color: #D8C3A5;
+  text-shadow: 0 0 6px rgba(243, 233, 220, 0.2);
 }
 
 /* ===========================
@@ -99,7 +99,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: rgba(232, 160, 191, 0.08);
+  background: rgba(243, 233, 220, 0.08);
   animation: scan 4s linear infinite;
   pointer-events: none;
 }
@@ -115,7 +115,7 @@
 
 .cursor {
   animation: blink 0.8s infinite;
-  color: #E8A0BF;
+  color: #C08552;
 }
 
 @keyframes blink {

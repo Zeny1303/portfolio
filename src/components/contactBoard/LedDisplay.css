@@ -1,13 +1,13 @@
 /* =========================================
-   LED / CRT DISPLAY — Twilight Meadow Theme
+   LED / CRT DISPLAY — Warm Cream/Brownie Palette
    ========================================= */
 
 .led-display {
   width: 100%;
   height: 100%;
-  background: #090F1A;
+  background: #381A12;
   border-radius: 18px;
-  border: 3px solid #1B263B;
+  border: 3px solid #5E3023;
   padding: 10px 22px 10px;
   display: flex;
   flex-direction: column;
@@ -18,10 +18,10 @@
 
   /* Inset depth — recessed screen */
   box-shadow:
-    inset 0 0 0 1px rgba(232, 160, 191, 0.1),
-    inset 0 2px 8px rgba(0,0,0,0.9),
-    inset 0 -2px 6px rgba(0,0,0,0.6),
-    0 6px 24px rgba(0,0,0,0.5);
+    inset 0 0 0 1px rgba(192, 133, 82, 0.2),
+    inset 0 2px 8px rgba(0,0,0,0.8),
+    inset 0 -2px 6px rgba(0,0,0,0.5),
+    0 6px 24px rgba(94, 48, 35, 0.4);
 }
 
 /* ── Scanlines ── */
@@ -49,7 +49,7 @@
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(232, 160, 191, 0.04),
+    rgba(243, 233, 220, 0.05),
     transparent
   );
   animation: beam-move 5s linear infinite;
@@ -95,23 +95,23 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #E8A0BF;
+  background: #C08552;
   flex-shrink: 0;
   box-shadow:
-    0 0 4px #E8A0BF,
-    0 0 10px rgba(232, 160, 191, 0.6);
+    0 0 4px #C08552,
+    0 0 10px rgba(192, 133, 82, 0.6);
   animation: pulse-led 2s ease infinite;
 }
 
 @keyframes pulse-led {
-  0%, 100% { box-shadow: 0 0 4px #E8A0BF, 0 0 10px rgba(232, 160, 191, 0.5); }
-  50%       { box-shadow: 0 0 8px #E8A0BF, 0 0 20px rgba(232, 160, 191, 0.85); }
+  0%, 100% { box-shadow: 0 0 4px #C08552, 0 0 10px rgba(192, 133, 82, 0.5); }
+  50%       { box-shadow: 0 0 8px #C08552, 0 0 20px rgba(192, 133, 82, 0.85); }
 }
 
 .led-online-text {
   font-family: "Silkscreen", monospace;
   font-size: 10px;
-  color: #E8A0BF;
+  color: #C08552;
   letter-spacing: 2px;
 }
 
@@ -119,7 +119,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgba(245, 230, 202, 0.6);
+  color: rgba(243, 233, 220, 0.6);
   font-size: 20px;
 }
 
@@ -138,12 +138,12 @@
   font-size: clamp(24px, 4vw, 50px);
   font-weight: 700;
   letter-spacing: 3px;
-  color: #F5E6CA;
+  color: #F3E9DC;
   text-align: center;
   line-height: 1;
   text-shadow:
-    0 0 8px rgba(245, 230, 202, 0.5),
-    0 0 20px rgba(232, 160, 191, 0.3);
+    0 0 8px rgba(243, 233, 220, 0.5),
+    0 0 20px rgba(192, 133, 82, 0.35);
 }
 
 .led-cursor {
@@ -151,7 +151,7 @@
   margin-left: 4px;
   opacity: 1;
   animation: cur-blink 0.9s step-start infinite;
-  color: #E8A0BF;
+  color: #C08552;
 }
 
 @keyframes cur-blink {
@@ -161,7 +161,7 @@
 /* ── Divider ── */
 .led-divider {
   width: 100%;
-  border-top: 2px dotted rgba(232, 160, 191, 0.25);
+  border-top: 2px dotted rgba(192, 133, 82, 0.3);
   position: relative;
   z-index: 3;
 }
@@ -179,13 +179,13 @@
   font-family: "Silkscreen", monospace;
   font-size: clamp(9px, 1.4vw, 15px);
   letter-spacing: 2px;
-  color: #D1C7BD;
-  text-shadow: 0 0 8px rgba(245, 230, 202, 0.2);
+  color: #D8C3A5;
+  text-shadow: 0 0 8px rgba(243, 233, 220, 0.2);
 }
 
 .led-corner-icon {
   font-size: 18px;
-  color: rgba(232, 160, 191, 0.4);
+  color: rgba(192, 133, 82, 0.5);
 }
 
 /* ── Responsive ── */

@@ -33,7 +33,7 @@ export default function SideButtons() {
         <span className="screw bottom-left"></span>
         <span className="screw bottom-right"></span>
         <FaMapMarkerAlt className="button-icon" />
-        <h3>LOCATION</h3>
+        <h3>BOKARO STEEL CITY, JHARKHAND (READY TO RELOCATE)</h3>
       </button>
 
     </div>

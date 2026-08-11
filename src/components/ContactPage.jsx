@@ -1,15 +1,15 @@
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { SiteHeader, NavPanel } from './Navbar'
 import ContactBoard from './contactBoard/ContactBoard'
 import './ContactPage.css'
 
 export default function ContactPage() {
-  const navigate = useNavigate()
+  const [navOpen, setNavOpen] = useState(false)
 
   return (
     <div className="contact-page">
-      <button className="contact-back" onClick={() => navigate('/')} aria-label="Back to home">
-        ← Back
-      </button>
+      <SiteHeader onOpen={() => setNavOpen(true)} />
+      <NavPanel isOpen={navOpen} onClose={() => setNavOpen(false)} />
       <ContactBoard />
     </div>
   )

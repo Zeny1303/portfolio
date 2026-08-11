@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { FaPencilAlt, FaMapMarkerAlt, FaLinkedinIn, FaGithub, FaEnvelope } from "react-icons/fa";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { FaPencilAlt, FaMapMarkerAlt, FaLinkedinIn, FaGithub, FaEnvelope, FaTwitter } from "react-icons/fa";
 import { HiDocument } from "react-icons/hi";
 
 import LedDisplay from "./LedDisplay";
@@ -15,16 +15,17 @@ import "./HardwareButton.css";
 
 /* ── Side tab definitions ── */
 const TABS = [
-  { id: "intro",    label: "INTRO",    icon: FaPencilAlt   },
-  { id: "resume",   label: "RESUME",   icon: HiDocument    },
-  { id: "location", label: "LOCATION", icon: FaMapMarkerAlt },
+  { id: "intro",    label: "INTRO",    icon: FaPencilAlt },
+  { id: "resume",   label: "RESUME",   icon: HiDocument },
+  { id: "location", label: "BOKARO STEEL CITY, JHARKHAND", subLabel: "READY TO RELOCATE", icon: FaMapMarkerAlt },
 ];
 
 /* ── Social button definitions ── */
 const SOCIALS = [
-  { id: "linkedin", label: "LINKEDIN", icon: FaLinkedinIn, variant: "linkedin", href: "https://linkedin.com" },
-  { id: "github",   label: "GITHUB",   icon: FaGithub,     variant: "github",   href: "https://github.com"   },
-  { id: "email",    label: "EMAIL",    icon: FaEnvelope,   variant: "email",    href: "mailto:you@email.com" },
+  { id: "linkedin", label: "LINKEDIN", icon: FaLinkedinIn, variant: "linkedin", href: "https://www.linkedin.com/in/sneha1309/" },
+  { id: "github",   label: "GITHUB",   icon: FaGithub,     variant: "github",   href: "https://github.com/Zeny1303"   },
+  { id: "twitter",  label: "TWITTER",  icon: FaTwitter,    variant: "twitter",  href: "https://x.com/Snehakashyap09" },
+  { id: "email",    label: "EMAIL",    icon: FaEnvelope,   variant: "email",    href: "mailto:snehakashyap1309@gmail.com" },
 ];
 
 /* ── Board entrance variants ── */
@@ -39,36 +40,13 @@ const boardVariants = {
 export default function ContactBoard() {
   const [activeTab, setActiveTab] = useState("intro");
 
-  /* ── 3D tilt on hover ── */
-  const boardRef = useRef(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [8, -8]),  { stiffness: 200, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 200, damping: 30 });
-
-  const handleMouseMove = (e) => {
-    const rect = boardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top)  / rect.height - 0.5);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
   return (
-    <div style={{ perspective: "1200px" }}>
+    <div>
       <motion.div
-        ref={boardRef}
         className="contact-board"
         variants={boardVariants}
         initial="hidden"
         animate="visible"
-        style={{ rotateX, rotateY }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
       >
       {/* ── Grain texture overlay ── */}
       <div className="board-grain" aria-hidden="true" />
@@ -92,6 +70,7 @@ export default function ContactBoard() {
               key={tab.id}
               icon={tab.icon}
               label={tab.label}
+              subLabel={tab.subLabel}
               active={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
               index={i}
@@ -109,7 +88,7 @@ export default function ContactBoard() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.15, type: "spring", stiffness: 260, damping: 24 }}
           >
-            <LedDisplay />
+            <LedDisplay activeTab={activeTab} />
           </motion.div>
 
           {/* Social buttons */}

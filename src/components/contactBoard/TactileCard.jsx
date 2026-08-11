@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 
 /**
  * TactileCard — physical tab/switch with active glow state.
- * Props: icon, label, active, onClick, index
+ * Props: icon, label, subLabel, active, onClick, index
  */
-export default function TactileCard({ icon: Icon, label, active, onClick, index }) {
+export default function TactileCard({ icon: Icon, label, subLabel, active, onClick, index }) {
   return (
     <motion.button
       className={`tactile-card ${active ? "tactile-active" : ""}`}
@@ -31,8 +31,9 @@ export default function TactileCard({ icon: Icon, label, active, onClick, index 
         <Icon className="tc-icon" />
       </span>
 
-      {/* Label */}
+      {/* Label & SubLabel */}
       <span className="tc-label">{label}</span>
+      {subLabel && <span className="tc-sublabel">{subLabel}</span>}
     </motion.button>
   );
 }

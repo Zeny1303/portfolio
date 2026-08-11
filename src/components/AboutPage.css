@@ -61,9 +61,9 @@
   display: flex;
   flex-direction: column;
   margin: 0;
-  font-family: 'Chubbo', sans-serif;
+  font-family: 'Zodiak', serif;
   font-size: clamp(4.5rem, 8.5vw, 8.5rem);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 0.88;
   letter-spacing: -0.04em;
   text-transform: uppercase;
@@ -101,7 +101,7 @@
   position: relative;
   z-index: 10;
   width: 100%;
-  min-height: 420vh;
+  min-height: auto;
   background-color: var(--base-100);
   background-size: cover;
   background-position: center top;
@@ -109,7 +109,7 @@
   image-rendering: -webkit-optimize-contrast;
   border-radius: 40px 40px 0 0;
   box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.12);
-  padding: 4rem 0 6rem;
+  padding: 4rem 0 0;
   overflow: hidden;
   isolation: isolate;
 }
@@ -233,7 +233,7 @@
 .spotlight-section {
   position: relative;
   width: 100%;
-  padding: 1rem 4rem 10rem;
+  padding: 1rem 4rem 0;
   overflow: visible;
   isolation: isolate;
   z-index: 10;
@@ -268,29 +268,59 @@
 
 .left-row .journey-content {
   grid-column: 1;
+  grid-row: 1;
   align-items: flex-end;
   text-align: right;
 }
 
 .right-row .journey-content {
   grid-column: 2;
+  grid-row: 1;
   align-items: flex-start;
   text-align: left;
 }
 
 .year {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: clamp(2.4rem, 4vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   font-family: 'Geist Mono', monospace;
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  z-index: 20;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: block;
+  white-space: nowrap;
 }
 
-.journey-row.active .year {
+.left-row .year {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+  align-self: center;
+  transform: translateX(-20px);
+}
+
+.right-row .year {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  transform: translateX(20px);
+}
+
+.journey-row.active.left-row .year {
   color: #ffffff;
-  transform: scale(1.08);
+  transform: translateX(-20px) scale(1.06);
+}
+
+.journey-row.active.right-row .year {
+  color: #ffffff;
+  transform: translateX(20px) scale(1.06);
 }
 
 /* Journey Cards */
@@ -457,6 +487,71 @@
   font-weight: 600;
 }
 
+/* Full screen width ending image */
+.ending-image {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: 4rem;
+  margin-bottom: 0;
+  line-height: 0;
+}
+
+.ending-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.ending-svg-group {
+  position: absolute;
+  top: 59%;
+  left: 6%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  width: 42vw;
+  max-width: 563px;
+  pointer-events: none;
+}
+
+.ending-svg {
+  height: auto;
+  display: block;
+}
+
+.ending-svg-1 {
+  width: 100%;
+}
+
+.ending-svg-2 {
+  width: 70%;
+}
+
+.ending-svg-row-3 {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.3rem;
+  width: 38%;
+}
+
+.ending-svg-row-3 .ending-svg-3 {
+  width: 85%;
+}
+
+.ending-svg-dot {
+  width: 13%;
+  height: auto;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1000px) {
   .home-hero-section {
@@ -468,17 +563,26 @@
   }
 
   .spotlight-section {
-    padding: 2rem 2rem 6rem;
+    padding: 2rem 2rem 0;
   }
 
   .journey-row {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
+  }
+
+  .left-row .year,
+  .right-row .year {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    align-self: center;
   }
 
   .left-row .journey-content,
   .right-row .journey-content {
     grid-column: 1;
+    grid-row: 2;
     align-items: center;
     text-align: center;
   }
@@ -489,6 +593,13 @@
 
   .continuous-svg-layer {
     width: 90%;
+  }
+
+  .ending-svg-group {
+    top: 12%;
+    left: 5%;
+    gap: 0.5rem;
+    width: 48vw;
   }
 }
 
@@ -521,7 +632,7 @@
   }
 
   .spotlight-section {
-    padding: 2rem 1rem 5rem;
+    padding: 2rem 1rem 0;
   }
 
   .continuous-svg-layer {
@@ -538,6 +649,13 @@
   .journey-card {
     width: 100%;
     padding: 1.5rem;
+  }
+
+  .ending-svg-group {
+    top: 8%;
+    left: 4%;
+    gap: 0.3rem;
+    width: 52vw;
   }
 }
 

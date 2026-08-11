@@ -1,81 +1,154 @@
-/* ── Site Header & Nav Panel Styles ── */
-.site-header {
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700&display=swap');
+
+/* ── NakedCity Inspired Floating Navbar Backdrop ── */
+.naked-navbar-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(840px, 92vw);
+  height: 58px;
   z-index: 1000;
-  background: rgba(245, 243, 238, 0.85);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.brand-logo {
-  font-family: 'Chubbo', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 0.05em;
-  color: #111;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 700;
+.naked-navbar-backdrop.scrolled {
+  width: min(760px, 94vw);
+  height: 52px;
+  top: 0.8rem;
 }
 
-.header-nav {
+.navbar-background {
+  position: absolute;
+  inset: 0;
+  background: rgba(245, 243, 238, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 36px;
+  border: 1px solid rgba(15, 15, 15, 0.08);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  z-index: 0;
+}
+
+.naked-navbar-backdrop:hover .navbar-background {
+  border-color: rgba(15, 15, 15, 0.16);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+}
+
+.navbar-items {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 1.6rem;
+}
+
+/* Links Columns */
+.navbar-links {
   display: flex;
   align-items: center;
-  gap: 1.8rem;
+  gap: 1.6rem;
 }
 
-.nav-item-btn {
+.left-links {
+  justify-content: flex-start;
+}
+
+.right-links {
+  justify-content: flex-end;
+}
+
+.nav-link-btn {
   background: none;
   border: none;
-  font-family: 'Geist Mono', monospace;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #444;
+  font-family: 'Host Grotesk', 'Geist Mono', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 550;
+  color: #222;
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  padding: 4px 10px;
+  border-radius: 20px;
+  position: relative;
+  transition: all 0.25s ease;
 }
 
-.nav-item-btn:hover,
-.nav-item-btn.active {
+.nav-link-btn:hover {
   color: #000;
-  font-weight: 600;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.06);
 }
 
+.nav-link-btn.active {
+  color: #000;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.nav-link-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 2px;
+  background: #000;
+  border-radius: 2px;
+}
+
+/* Center Brand Logo */
+.navbar-logo {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
+}
+
+.logo-brand {
+  font-family: 'Zodiak', 'Chubbo', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #111;
+  text-transform: uppercase;
+}
+
+/* Menu Toggle Pill */
 .menu-toggle-btn {
+  display: none;
   background: #111;
   color: #fff;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 14px;
   font-family: 'Geist Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   border-radius: 20px;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .menu-toggle-btn:hover {
   background: #333;
-  transform: translateY(-1px);
+  transform: scale(1.05);
 }
 
-/* Nav Panel Slideout */
+/* Nav Panel Slideout Overlay */
 .nav-panel-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
   z-index: 2000;
   opacity: 0;
   pointer-events: none;
@@ -92,16 +165,15 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: min(400px, 85vw);
+  width: min(380px, 85vw);
   background: #14161e;
   color: #fff;
   padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transform: translateX(100%);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-panel-overlay.open .nav-panel-content {
@@ -112,56 +184,69 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 3rem;
 }
 
 .nav-panel-title {
-  font-family: 'Anton', sans-serif;
-  font-size: 1.4rem;
-  letter-spacing: 0.05em;
-  color: #e6e9ed;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
 }
 
 .close-btn {
   background: none;
   border: none;
-  color: #aaa;
+  color: #fff;
   font-size: 1.8rem;
   cursor: pointer;
-  transition: color 0.2s;
-}
-
-.close-btn:hover {
-  color: #fff;
 }
 
 .nav-panel-links {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin: 2rem 0;
 }
 
 .nav-panel-link {
-  font-family: 'Anton', sans-serif;
-  font-size: 2.2rem;
-  color: #8a8d97;
   background: none;
   border: none;
+  color: #aaa;
+  font-family: 'Chubbo', sans-serif;
+  font-size: 2rem;
   text-align: left;
   cursor: pointer;
-  transition: color 0.2s, transform 0.2s;
+  transition: all 0.2s ease;
 }
 
 .nav-panel-link:hover,
 .nav-panel-link.active {
-  color: #ffffff;
-  transform: translateX(10px);
+  color: #fff;
+  transform: translateX(8px);
 }
 
-.nav-panel-footer {
-  font-family: 'Geist Mono', monospace;
-  font-size: 0.75rem;
-  color: #666;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1.5rem;
+/* Responsive Mobile Navigation */
+@media (max-width: 720px) {
+  .left-links {
+    display: none;
+  }
+
+  .right-links .nav-link-btn {
+    display: none;
+  }
+
+  .menu-toggle-btn {
+    display: block;
+  }
+
+  .naked-navbar-backdrop {
+    width: 92vw;
+    height: 52px;
+    top: 0.8rem;
+  }
+
+  .navbar-items {
+    padding: 0 1.2rem;
+  }
 }

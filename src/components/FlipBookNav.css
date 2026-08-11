@@ -223,7 +223,7 @@
 
 /* Book Content Elements */
 .book-hero-title {
-  font-family: 'Anton', sans-serif;
+  font-family: 'Zodiak', serif;
   font-size: clamp(2rem, 3.8vw, 3.5rem);
   line-height: 1.05;
   color: #222;

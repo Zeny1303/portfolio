@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
 export function SiteHeader({ onOpen, activePage, onNavigate }) {
   const navigate = useNavigate()
   const location = useLocation()
-  
+  const [scrolled, setScrolled] = useState(false)
+  const headerRef = useRef(null)
+
   const currentPath = activePage || location.pathname
 
   const handleNav = (path, label) => {
@@ -16,42 +18,65 @@ export function SiteHeader({ onOpen, activePage, onNavigate }) {
     }
   }
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 30) {
+        setScrolled(true)
+      } else {
+        setScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="site-header">
-      <div className="brand-logo" onClick={() => handleNav('/', 'Home')}>
-        SNEHA
+    <header className={`naked-navbar-backdrop ${scrolled ? 'scrolled' : ''}`} ref={headerRef}>
+      <div className="navbar-background"></div>
+
+      <div className="navbar-items">
+        {/* Left Side Links */}
+        <div className="navbar-links left-links">
+          <button
+            className={`nav-link-btn ${currentPath === '/' || currentPath === 'Home' ? 'active' : ''}`}
+            onClick={() => handleNav('/', 'Home')}
+          >
+            Home
+          </button>
+          <button
+            className={`nav-link-btn ${currentPath === '/about' || currentPath === 'About' ? 'active' : ''}`}
+            onClick={() => handleNav('/about', 'About')}
+          >
+            About
+          </button>
+        </div>
+
+        {/* Center Brand Logo */}
+        <div className="navbar-logo" onClick={() => handleNav('/', 'Home')}>
+          <span className="logo-brand">SNEHA</span>
+        </div>
+
+        {/* Right Side Links */}
+        <div className="navbar-links right-links">
+          <button
+            className={`nav-link-btn ${currentPath === '/work' || currentPath === 'Work' || currentPath.startsWith('/work') ? 'active' : ''}`}
+            onClick={() => handleNav('/work', 'Work')}
+          >
+            Projects
+          </button>
+          <button
+            className={`nav-link-btn ${currentPath === '/contact' || currentPath === 'Contact' ? 'active' : ''}`}
+            onClick={() => handleNav('/contact', 'Contact')}
+          >
+            Contact
+          </button>
+
+          <button className="menu-toggle-btn" onClick={onOpen} aria-label="Toggle Menu">
+            MENU
+          </button>
+        </div>
       </div>
-
-      <nav className="header-nav">
-        <button
-          className={`nav-item-btn ${currentPath === '/' || currentPath === 'Home' ? 'active' : ''}`}
-          onClick={() => handleNav('/', 'Home')}
-        >
-          Home
-        </button>
-        <button
-          className={`nav-item-btn ${currentPath === '/about' || currentPath === 'About' ? 'active' : ''}`}
-          onClick={() => handleNav('/about', 'About')}
-        >
-          About
-        </button>
-        <button
-          className={`nav-item-btn ${currentPath === '/work' || currentPath === 'Work' ? 'active' : ''}`}
-          onClick={() => handleNav('/work', 'Work')}
-        >
-          Projects
-        </button>
-        <button
-          className={`nav-item-btn ${currentPath === '/contact' || currentPath === 'Contact' ? 'active' : ''}`}
-          onClick={() => handleNav('/contact', 'Contact')}
-        >
-          Contact
-        </button>
-
-        <button className="menu-toggle-btn" onClick={onOpen}>
-          MENU
-        </button>
-      </nav>
     </header>
   )
 }
@@ -97,11 +122,6 @@ export function NavPanel({ isOpen, onClose, onLinkClick }) {
               {link.label}
             </button>
           ))}
-        </div>
-
-        <div className="nav-panel-footer">
-          <p>© {new Date().getFullYear()} Sneha — Software Engineer</p>
-          <p style={{ marginTop: '4px', opacity: 0.7 }}>Full Stack Developer Portfolio</p>
         </div>
       </div>
     </div>

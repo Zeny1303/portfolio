@@ -7,7 +7,7 @@ export const journeyMilestones = [
     heading: 'STARTING POINT',
     subtitle: 'B.Tech in Computer Science Engineering (Data Science)',
     institution: 'Babu Banarasi Das Institute of Technology and Management (BBDNITM)',
-    description: `I joined Babu Banarasi Das Institute of Technology and Management for B.Tech in Computer Science Engineering with a Data Science specialization. During this period I became interested in two different directions: Data Science and Web Development.`,
+    description: `I joined Babu Banarasi Das Institute of Technology and Management for B.Tech in Computer Science Engineering with a Data Science specialization. During this period I built strong foundations in Data Science and Web Development.`,
     techTags: ['Python', 'HTML', 'CSS', 'JavaScript', 'C', 'C++'],
   },
   {
@@ -15,7 +15,7 @@ export const journeyMilestones = [
     year: '2023–2024',
     heading: 'EXPLORING MYSELF',
     subtitle: 'Self-Discovery & Experimentation',
-    description: `This period was less about having a fixed direction and more about exploring. I spent time understanding what kind of developer I actually wanted to become. I experimented with different areas of computer science and gradually started realizing that I enjoyed building things on the web.`,
+    description: `This period was about exploring core computer science domains. I spent time building projects, understanding full-stack engineering, and realizing that I enjoyed creating impactful web applications.`,
     techTags: ['Machine Learning', 'Pandas', 'NumPy', 'JavaScript', 'React'],
   },
   {
@@ -23,7 +23,7 @@ export const journeyMilestones = [
     year: '2024–2025',
     heading: 'FINDING MY DIRECTION',
     subtitle: 'From Concepts to Building Real-World Applications',
-    description: `This was the point where my curiosity became more focused. I became increasingly interested in Web Development and started building real-world applications instead of only learning concepts. I got my first real-world experience through a freelance project for a coaching institute.`,
+    description: `I focused on Web Development and started building production-grade applications. I got my first real-world engineering experience through a freelance project for a coaching institute.`,
     role: 'FREELANCE WEB DEVELOPER',
     company: 'Resolute Edu Institute • Bokaro, Jharkhand',
     duration: 'Feb 2025 – Jun 2025',

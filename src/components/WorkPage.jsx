@@ -1,113 +1,21 @@
-import { useLayoutEffect, useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
-import cortexImg from '../assests/cortex.png'
-import taskflowImg from '../assests/taskflow.png'
-import nexoraImg from '../assests/nexora.png'
+import { projects } from '../data/projectsData'
+import { SiteHeader, NavPanel } from './Navbar'
 import './WorkPage.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Particle Canvas Component for interactive subtle floating particles
-function ParticleCanvas() {
-  const canvasRef = useRef(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    let animationFrameId
-    let particles = []
-    const particleCount = 50
-    const colors = ['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0.2)']
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    window.addEventListener('resize', resizeCanvas)
-    resizeCanvas()
-
-    class Particle {
-      constructor() {
-        this.reset()
-      }
-      reset() {
-        this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
-        this.radius = Math.random() * 2.5 + 0.5
-        this.color = colors[Math.floor(Math.random() * colors.length)]
-        this.speedX = (Math.random() - 0.5) * 0.5
-        this.speedY = (Math.random() - 0.5) * 0.5
-      }
-      update() {
-        this.x += this.speedX
-        this.y += this.speedY
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1
-      }
-      draw() {
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        ctx.fillStyle = this.color
-        ctx.fill()
-      }
-    }
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle())
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      particles.forEach((p) => {
-        p.update()
-        p.draw()
-      })
-      animationFrameId = requestAnimationFrame(animate)
-    }
-
-    animate()
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas)
-      cancelAnimationFrame(animationFrameId)
-    }
-  }, [])
-
-  return (
-    <canvas
-      ref={canvasRef}
-      id="particle-canvas"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
-    />
-  )
-}
-
 export default function WorkPage() {
   const navigate = useNavigate()
-  const [expandedExplanation, setExpandedExplanation] = useState({})
+  const [selectedProject, setSelectedProject] = useState(null)
+  const [navOpen, setNavOpen] = useState(false)
   const containerRef = useRef(null)
   const horizontalRef = useRef(null)
   const pinRef = useRef(null)
-
-  const toggleExplanation = (index) => {
-    setExpandedExplanation((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }))
-  }
 
   useLayoutEffect(() => {
     const scrollerEl = containerRef.current
@@ -170,72 +78,16 @@ export default function WorkPage() {
     }
   }, [])
 
-  const projects = [
-    {
-      id: 'cortex',
-      title: 'Cortex',
-      subtitle: 'AI Interview platform',
-      category: 'Real-Time AI Interview SaaS Platform',
-      image: cortexImg,
-      summary:
-        'Built full-stack SaaS platform delivering real-time AI interview experiences with collaborative editor, voice pipeline, analytics, and WebSocket communication.',
-      tags: ['JavaScript', 'Node.js', 'React', 'WebSocket', 'Docker', 'AI Voice Pipeline', 'Analytics'],
-      bullets: [
-        'Built full-stack SaaS platform delivering real-time AI interview experiences with collaborative editor, voice pipeline, analytics, and WebSocket communication.',
-        'Engineered modular Node.js backend with WebSocket voice streaming, AI interviewer integration, RESTful APIs, authentication, containerized CI/CD, and observability monitoring.',
-        'Designed collaborative in-browser code editor with real-time synchronization, scoring analytics, event-tracking pipeline, and latency-optimized architecture.'
-      ],
-      github: 'https://github.com/Zeny1303',
-      demo: '#'
-    },
-    {
-      id: 'taskflow',
-      title: 'TaskFlow',
-      subtitle: 'Task & Workflow Management',
-      category: 'Full-Stack Task & Workflow Management Platform',
-      image: taskflowImg,
-      summary:
-        'Engineered a full-stack task management platform utilizing React (TypeScript) and Django REST Framework, featuring dynamic Kanban boards, custom project workflows, and secure JWT-based authentication.',
-      tags: ['React', 'TypeScript', 'Django', 'DRF', 'MongoDB', 'Docker', 'JWT', 'Nginx'],
-      bullets: [
-        'Engineered a full-stack task management platform utilizing React (TypeScript) and Django REST Framework, featuring dynamic Kanban boards, custom project workflows, and secure JWT-based authentication.',
-        'Implemented role-based access control (RBAC) and optimized RESTful APIs for seamless CRUD operations, project analytics, and efficient data handling.',
-        'Architected a multi-container Docker environment deployed via Railway and Nginx, integrating CI/CD pipelines, state management using AuthContext, and performance monitoring.'
-      ],
-      github: 'https://github.com/Zeny1303',
-      demo: '#'
-    },
-    {
-      id: 'coinpay',
-      title: 'CoinPay',
-      subtitle: 'P2P Digital Wallet Platform',
-      category: 'Peer-to-Peer Digital Wallet & Payment Platform',
-      image: nexoraImg,
-      summary:
-        'Architected and developed a secure peer-to-peer digital wallet platform enabling virtual credit transfers, QR-based payments, and persistent transaction history.',
-      tags: ['Node.js', 'Express.js', 'MongoDB', 'React Native', 'JWT', 'Docker', 'Swagger', 'Bcrypt'],
-      bullets: [
-        'Architected and developed a secure peer-to-peer digital wallet platform enabling virtual credit transfers using Node.js, Express.js, MongoDB, and React Native.',
-        'Implemented JWT authentication, role-based access control (RBAC), QR-based payments, and persistent transaction history.',
-        'Engineered 15+ RESTful APIs for authentication, wallet management, and transaction processing using modular MVC architecture with centralized middleware, request validation, bcrypt hashing, and Swagger documentation.'
-      ],
-      github: 'https://github.com/Zeny1303',
-      demo: '#'
-    }
-  ]
+
 
   return (
     <div className="work-page" ref={containerRef}>
-      <ParticleCanvas />
-
-      <button className="work-back-btn" onClick={() => navigate('/')} aria-label="Back to home">
-        ← Back to Home
-      </button>
+      <SiteHeader onOpen={() => setNavOpen(true)} />
+      <NavPanel isOpen={navOpen} onClose={() => setNavOpen(false)} />
 
       <section className="intro">
         <div className="work-header">
-          <span className="work-tag">Featured Works</span>
-          <h1 className="work-title">Engineering Projects</h1>
+          <h1 className="work-title">Projects</h1>
           <p className="work-subtitle">
             Full-stack SaaS applications, real-time WebSocket platforms, microservices architectures, and mobile backend integrations.
           </p>
@@ -288,15 +140,15 @@ export default function WorkPage() {
                         </a>
                         <button
                           type="button"
-                          className={`wireframe-btn ${expandedExplanation[index] ? 'active' : ''}`}
-                          onClick={() => toggleExplanation(index)}
+                          className="wireframe-btn details-btn"
+                          onClick={() => navigate(`/work/${project.id}`)}
                         >
-                          Explanation {expandedExplanation[index] ? '▲' : '▼'}
+                          Details →
                         </button>
                       </div>
                     </div>
 
-                    {/* Row 2: Subtitle & Tech Stack Grid (Left Column) | Summary & Explanation (Right Column) */}
+                    {/* Row 2: Subtitle & Tech Stack Grid (Left Column) | Summary (Right Column) */}
                     <div className="project-wireframe-row-2">
                       <div className="wireframe-left-col">
                         <p className="project-wireframe-subtitle">{project.subtitle}</p>
@@ -315,16 +167,6 @@ export default function WorkPage() {
 
                       <div className="wireframe-summary-col">
                         <p className="wireframe-summary-text">{project.summary}</p>
-
-                        {expandedExplanation[index] && (
-                          <div className="wireframe-explanation-box">
-                            <ul>
-                              {project.bullets.map((bullet, i) => (
-                                <li key={i}>{bullet}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -335,13 +177,235 @@ export default function WorkPage() {
         </div>
       </section>
 
-      <footer className="work-footer">
-        <h2 className="work-footer-title">Looking for a Full-Stack Engineer?</h2>
-        <p className="work-footer-subtitle">Let's build something exceptional together.</p>
-        <button className="work-footer-btn" onClick={() => navigate('/contact')}>
-          Get In Touch →
-        </button>
-      </footer>
+      {/* =========================================================
+          CODING & GITHUB STATS SECTION (AFTER PROJECTS SCROLL)
+      ========================================================= */}
+      <section className="coding-stats-section">
+        <div className="coding-stats-header">
+          <span className="coding-tag">Problem Solving & Open Source</span>
+          <h2 className="coding-title">DSA & GitHub Contributions</h2>
+          <p className="coding-subtitle">500+ Algorithms Problems Solved & 525+ GitHub Contributions in 2026</p>
+        </div>
+
+        <div className="coding-cards-grid">
+          {/* LeetCode Card */}
+          <div className="coding-card leetcode-card">
+            <div className="coding-card-top">
+              <div className="coding-card-title">
+                <span className="coding-icon leetcode-icon">⚡</span>
+                <div>
+                  <h3>LeetCode</h3>
+                  <span className="coding-handle">@Sneha09 (Zeny1303)</span>
+                </div>
+              </div>
+              <span className="badge-pill">50 Days Badge 2026</span>
+            </div>
+
+            <div className="coding-main-stat">
+              <div className="stat-large">
+                <span className="stat-num">340</span>
+                <span className="stat-total">/ 4,018</span>
+              </div>
+              <span className="stat-lbl">Problems Solved</span>
+            </div>
+
+            <div className="difficulty-bars">
+              <div className="diff-item diff-easy">
+                <div className="diff-info">
+                  <span>Easy</span>
+                  <strong>133 / 958</strong>
+                </div>
+                <div className="diff-progress-bg">
+                  <div className="diff-progress-fill easy-fill" style={{ width: '14%' }}></div>
+                </div>
+              </div>
+
+              <div className="diff-item diff-medium">
+                <div className="diff-info">
+                  <span>Medium</span>
+                  <strong>155 / 2,098</strong>
+                </div>
+                <div className="diff-progress-bg">
+                  <div className="diff-progress-fill medium-fill" style={{ width: '8%' }}></div>
+                </div>
+              </div>
+
+              <div className="diff-item diff-hard">
+                <div className="diff-info">
+                  <span>Hard</span>
+                  <strong>52 / 962</strong>
+                </div>
+                <div className="diff-progress-bg">
+                  <div className="diff-progress-fill hard-fill" style={{ width: '5%' }}></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="coding-extra-metrics">
+              <div className="extra-metric">
+                <span className="extra-val">1,479</span>
+                <span className="extra-lbl">Contest Rating (Top 51%)</span>
+              </div>
+              <div className="extra-metric">
+                <span className="extra-val">522</span>
+                <span className="extra-lbl">Past Year Submissions</span>
+              </div>
+            </div>
+
+            <a
+              href="https://leetcode.com/u/Zeny1303/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="coding-link-btn"
+            >
+              View LeetCode Profile ↗
+            </a>
+          </div>
+
+          {/* GitHub Card */}
+          <div className="coding-card github-card">
+            <div className="coding-card-top">
+              <div className="coding-card-title">
+                <span className="coding-icon github-icon">🐙</span>
+                <div>
+                  <h3>GitHub</h3>
+                  <span className="coding-handle">@Zeny1303</span>
+                </div>
+              </div>
+              <span className="badge-pill github-pill">525 Contributions in 2026</span>
+            </div>
+
+            <div className="coding-main-stat">
+              <div className="stat-large">
+                <span className="stat-num">27</span>
+                <span className="stat-total">Repositories</span>
+              </div>
+              <span className="stat-lbl">Open Source & Backend Engineering</span>
+            </div>
+
+            <div className="dsa-topics-list">
+              <span className="dsa-topic-tag">Node.js + Express.js</span>
+              <span className="dsa-topic-tag">Django REST Framework</span>
+              <span className="dsa-topic-tag">FastAPI</span>
+              <span className="dsa-topic-tag">MongoDB & PostgreSQL</span>
+              <span className="dsa-topic-tag">React / MERN Stack</span>
+              <span className="dsa-topic-tag">Docker Containerization</span>
+            </div>
+
+            <div className="coding-extra-metrics">
+              <div className="extra-metric">
+                <span className="extra-val">525</span>
+                <span className="extra-lbl">2026 Contributions</span>
+              </div>
+              <div className="extra-metric">
+                <span className="extra-val">11</span>
+                <span className="extra-lbl">Stars Earned</span>
+              </div>
+            </div>
+
+            <a
+              href="https://github.com/Zeny1303"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="coding-link-btn"
+            >
+              View GitHub Profile ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          PROJECT DETAIL SHOWCASE MODAL OVERLAY
+      ========================================================= */}
+      {selectedProject && (
+        <div className="project-modal-backdrop" onClick={() => setSelectedProject(null)}>
+          <div className="project-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="project-modal-close" onClick={() => setSelectedProject(null)}>
+              ✕
+            </button>
+
+            <div className="modal-header">
+              <span className="modal-category">{selectedProject.category}</span>
+              <h2 className="modal-title">{selectedProject.title}</h2>
+              <p className="modal-tagline">{selectedProject.details.tagline}</p>
+
+              <div className="modal-action-bar">
+                <a href={selectedProject.github} target="_blank" rel="noopener noreferrer" className="modal-btn github-btn">
+                  View Source Code on GitHub ↗
+                </a>
+                {selectedProject.demo !== '#' && (
+                  <a href={selectedProject.demo} target="_blank" rel="noopener noreferrer" className="modal-btn demo-btn">
+                    Launch Live Demo ↗
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {selectedProject.image && (
+              <div className="modal-image-container">
+                <img src={selectedProject.image} alt={selectedProject.title} />
+              </div>
+            )}
+
+            <div className="modal-body-grid">
+              {/* Left Column: Overview & Architecture */}
+              <div className="modal-left-col">
+                <div className="modal-section">
+                  <h3>Project Overview</h3>
+                  <p>{selectedProject.details.overview}</p>
+                </div>
+
+                <div className="modal-section">
+                  <h3>System Architecture & Design</h3>
+                  <ul>
+                    {selectedProject.details.architecture.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="modal-section">
+                  <h3>Key Engineering Accomplishments</h3>
+                  <ul>
+                    {selectedProject.details.keyFeatures.map((feat, idx) => (
+                      <li key={idx}>{feat}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Right Column: Metrics & Tech Stack */}
+              <div className="modal-right-col">
+                <div className="modal-metrics-card">
+                  <h3>Key Specifications</h3>
+                  <div className="metrics-list">
+                    {selectedProject.details.metrics.map((m, idx) => (
+                      <div key={idx} className="metric-row">
+                        <span className="metric-lbl">{m.label}</span>
+                        <strong className="metric-val">{m.value}</strong>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="modal-tech-card">
+                  <h3>Technologies Used</h3>
+                  <div className="modal-tech-tags">
+                    {selectedProject.tags.map((tag, idx) => (
+                      <span key={idx} className="modal-tech-pill">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      
     </div>
   )
 }

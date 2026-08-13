@@ -1,0 +1,54 @@
+.psr-section {
+  position: relative;
+  height: 400vh;
+  /* animation length — raise to slow it down */
+}
+
+.psr-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: #ffffff;
+  /* starting background */
+}
+
+.psr-brown {
+  position: absolute;
+  inset: 0;
+  background: #6b4a32;
+  /* the brown that reveals */
+  will-change: clip-path;
+}
+
+.psr-plane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 96px;
+  will-change: transform;
+}
+
+.psr-plane svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.psr-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  color: #f7f1ea;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psr-section {
+    height: 100vh;
+  }
+}

@@ -76,6 +76,7 @@ export default function PlaneScrollReveal({ children }) {
         angle + ART_ANGLE_OFFSET
       }deg)`;
       plane.style.color = p > 0.93 ? PLANE_LATE : PLANE_EARLY;
+      plane.style.opacity = '1'; // Ensure plane is visible
 
       // diagonal brown reveal: a line anchored just behind the plane
       const close = smoothstep(CLOSE_FROM, 1, p);

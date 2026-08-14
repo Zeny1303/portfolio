@@ -4,7 +4,6 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { NavPanel, SiteHeader } from './Navbar'
 import TechnologySection from './TechnologySection'
-import PlaneScrollReveal from './PlaneScrollReveal'
 import heroImage from '../assests/HeroImage.png'
 import bkBg from '../assests/bk.png'
 import cloudsImg from '../assests/cloudss.png'
@@ -324,21 +323,6 @@ export default function AboutPage() {
           </section>
 
           {/* ═══════════════════════════════════════════
-              PLANE SCROLL REVEAL TRANSITION
-          ═══════════════════════════════════════════ */}
-          <PlaneScrollReveal>
-            <h2 style={{
-              fontSize: 'clamp(2rem, 6vw, 4rem)',
-              fontWeight: 700,
-              margin: 0,
-              fontFamily: 'Zodiak, Georgia, serif',
-              letterSpacing: '-0.02em'
-            }}>
-              The Journey
-            </h2>
-          </PlaneScrollReveal>
-
-          {/* ═══════════════════════════════════════════
               2. ABOUT SECTION CARD (SLIDES UP OVER HERO SECTION)
           ═══════════════════════════════════════════ */}
           <section className="about-section-card" ref={aboutCardRef} style={{ backgroundImage: `url(${bkBg})` }}>
@@ -355,7 +339,7 @@ export default function AboutPage() {
             </div>
 
             {/* Journey Title Header */}
-            <div className="journey-title-section" style={{opacity: 0, pointerEvents: 'none'}}>
+            <div className="journey-title-section">
               <h2 className="journey-main-heading">
                 The Journe<span className="word-y">y</span>
               </h2>

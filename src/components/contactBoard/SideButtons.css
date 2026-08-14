@@ -53,6 +53,25 @@
 }
 
 /* ===========================
+   ACTIVE (audio playing)
+=========================== */
+
+.side-button--active {
+  background: #111;
+  box-shadow: 5px 5px 0px #555;
+}
+
+.side-button--active .button-icon,
+.side-button--active h3 {
+  color: #ffffff;
+}
+
+.side-button--active:hover {
+  background: #222;
+  box-shadow: 7px 7px 0px #555;
+}
+
+/* ===========================
    ICON
 =========================== */
 

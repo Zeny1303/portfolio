@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { usePortfolioNavigation } from '../hooks/usePortfolioNavigation'
 import './Navbar.css'
 
 export function SiteHeader({ onOpen, activePage, onNavigate }) {
-  const navigate = useNavigate()
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
   const headerRef = useRef(null)
+  const { navigateTo } = usePortfolioNavigation()
 
   const currentPath = activePage || location.pathname
 
@@ -14,7 +15,7 @@ export function SiteHeader({ onOpen, activePage, onNavigate }) {
     if (onNavigate) {
       onNavigate(path, label)
     } else {
-      navigate(path)
+      navigateTo(label || path)
     }
   }
 
@@ -82,8 +83,8 @@ export function SiteHeader({ onOpen, activePage, onNavigate }) {
 }
 
 export function NavPanel({ isOpen, onClose, onLinkClick }) {
-  const navigate = useNavigate()
   const location = useLocation()
+  const { navigateTo } = usePortfolioNavigation()
 
   const links = [
     { label: 'Home', path: '/' },
@@ -96,9 +97,8 @@ export function NavPanel({ isOpen, onClose, onLinkClick }) {
     if (onLinkClick) {
       onLinkClick(link.label)
     } else {
-      navigate(link.path)
+      navigateTo(link.label, { onCloseMenu: onClose })
     }
-    if (onClose) onClose()
   }
 
   return (

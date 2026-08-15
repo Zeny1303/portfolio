@@ -1,5 +1,5 @@
 /* =========================================
-   CONTACT FORM — Warm Cream/Brownie Theme
+   CONTACT FORM — Retro Hardware Leather Theme
 ========================================= */
 
 .contact-form {
@@ -21,44 +21,39 @@
 /* ── Input box ── */
 .input-box {
   width: 100%;
-  height: 58px;
+  height: 54px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
   padding: 0 16px;
-  border-radius: 13px;
-  border: none;
-  outline: 1.5px solid #895737;
-  background: linear-gradient(160deg, #5E3023 0%, #482319 100%);
+  border-radius: 12px;
+  border: 1px solid #5a3023;
+  outline: none;
+  background: linear-gradient(180deg, #3d1c14 0%, #29110b 100%);
   box-shadow:
-    0 1px 0 rgba(243, 233, 220, 0.08) inset,
-    0 -1px 0 rgba(0,0,0,0.5) inset,
-    2px 2px 0 #381A12,
-    0 4px 10px rgba(0,0,0,0.25);
-  transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 2px rgba(243, 233, 220, 0.08),
+    0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input-focused {
-  outline-color: #C08552;
+  border-color: #d98a48;
   box-shadow:
-    0 1px 0 rgba(243, 233, 220, 0.15) inset,
-    0 -1px 0 rgba(0,0,0,0.6) inset,
-    3px 3px 0 #28120B,
-    0 0 12px rgba(192, 133, 82, 0.35);
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 0 10px rgba(217, 138, 72, 0.35);
 }
 
-/* ── Icon ── */
 .input-icon {
   flex-shrink: 0;
   margin-right: 12px;
-  font-size: 17px;
-  color: #C08552;
+  font-size: 16px;
+  color: #c08552;
   transition: color 0.15s ease;
 }
 
-.input-focused .input-icon { color: #F3E9DC; }
+.input-focused .input-icon { color: #f3e9dc; }
 
-/* ── Input field ── */
 .input-box input {
   width: 100%;
   height: 100%;
@@ -67,113 +62,410 @@
   background: transparent;
   font-family: inherit;
   font-size: 14px;
-  color: #F3E9DC;
+  color: #f3e9dc;
 }
 
-.input-box input::placeholder { color: rgba(243, 233, 220, 0.55); }
+.input-box input::placeholder { color: rgba(243, 233, 220, 0.45); }
 
-/* ── Message box ── */
+/* =========================================
+   SINGLE COMPOSER CONTAINER (.message-box)
+========================================= */
+
 .message-box {
   position: relative;
   width: 100%;
-  min-height: 130px;
+  height: 120px;
   box-sizing: border-box;
   border-radius: 14px;
-  border: none;
-  outline: 1.5px solid #895737;
-  background: linear-gradient(160deg, #5E3023 0%, #482319 100%);
+  border: 1.5px solid #5a3023;
+  background: linear-gradient(180deg, #3d1c14 0%, #240e08 100%);
   box-shadow:
-    0 1px 0 rgba(243, 233, 220, 0.08) inset,
-    0 -1px 0 rgba(0,0,0,0.5) inset,
-    2px 2px 0 #381A12,
-    0 4px 10px rgba(0,0,0,0.25);
+    inset 0 3px 6px rgba(0, 0, 0, 0.75),
+    inset 0 -1px 2px rgba(243, 233, 220, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.4);
   overflow: hidden;
-  transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* ── Textarea ── */
+/* ── Dashed stitching border effect ── */
+.message-box::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px dashed rgba(243, 233, 220, 0.08);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* ── Mode 1: Text Mode ── */
 .message-box textarea {
   width: 100%;
-  height: 130px;
+  height: 100%;
   box-sizing: border-box;
-  padding: 16px 80px 16px 16px;
+  padding-right: 120px;
   border: none;
   outline: none;
   resize: none;
   background: transparent;
-  font-family: inherit;
+  font-family: "Courier New", Courier, monospace, inherit;
   font-size: 14px;
-  color: #F3E9DC;
+  color: #f3e9dc;
+  line-height: 1.5;
 }
 
-.message-box textarea::placeholder { color: rgba(243, 233, 220, 0.55); }
+.message-box textarea::placeholder { color: rgba(243, 233, 220, 0.45); }
 
-/* ── Action buttons (mic + send) ── */
-.msg-actions {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
+/* ── Mode 2 & 3: Voice Composer Layout ── */
+.voice-composer-container {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding-right: 180px; /* Space for right action buttons */
+  gap: 16px;
 }
 
-/* ── Mic button ── */
-.mic-btn {
-  width: 40px;
-  height: 40px;
+/* ── Red Recording Indicator Circle ── */
+.recording-indicator-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #d93838 0%, #991f1f 100%);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    0 0 12px rgba(217, 56, 56, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.recording-dot-pulse {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 0 6px #ffffff;
+  animation: pulse-indicator 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-indicator {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.75); opacity: 0.4; }
+}
+
+/* ── Play / Pause Button in Preview Mode ── */
+.preview-play-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   border: none;
-  border-radius: 10px;
-  outline: 1.5px solid #C08552;
-  background: linear-gradient(160deg, #895737 0%, #5E3023 100%);
-  color: #F3E9DC;
-  cursor: pointer;
-  box-shadow: 2px 2px 0 #381A12;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.mic-btn:hover {
-  background: linear-gradient(160deg, #A66E3F 0%, #895737 100%);
-  color: #ffffff;
-}
-
-.mic-active {
-  background: linear-gradient(160deg, #C08552 0%, #A66E3F 100%);
-  color: #F3E9DC;
-  outline-color: #F3E9DC;
-  box-shadow: 1px 1px 0 #28120B;
-}
-
-/* ── Send button ── */
-.send-btn {
-  width: 40px;
-  height: 40px;
+  outline: 1.5px solid #d98a48;
+  background: linear-gradient(180deg, #5e3023 0%, #3e1b12 100%);
+  color: #f3e9dc;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  border-radius: 10px;
-  outline: 1.5px solid #F3E9DC;
-  background: linear-gradient(160deg, #C08552 0%, #A66E3F 100%);
-  color: #F3E9DC;
   cursor: pointer;
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.3) inset,
-    2px 2px 0 #381A12;
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    2px 2px 4px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
-.send-btn:hover {
-  background: #D49661;
+.preview-play-btn:hover {
+  background: linear-gradient(180deg, #7d4433 0%, #5e3023 100%);
+  transform: scale(1.04);
+}
+
+/* ── Waveform Container ── */
+.waveform-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  min-width: 100px;
+}
+
+.waveform-bars {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  height: 40px;
+}
+
+.wave-bar-item {
+  flex: 1;
+  max-width: 4px;
+  min-width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #ffb366 0%, #d98a48 100%);
+  box-shadow: 0 0 6px rgba(217, 138, 72, 0.3);
+  transition: height 0.15s ease;
+}
+
+.wave-bar-item.live-anim {
+  animation: wave-bar-pulse 0.8s infinite ease-in-out alternate;
+}
+
+@keyframes wave-bar-pulse {
+  0% { transform: scaleY(0.3); opacity: 0.6; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+/* ── Playback Progress Track ── */
+.playback-progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(243, 233, 220, 0.15);
+  border-radius: 2px;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.playback-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d98a48 0%, #ffb366 100%);
+  box-shadow: 0 0 8px rgba(255, 179, 102, 0.8);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+/* ── Dotted Vertical Separator Line ── */
+.divider-line {
+  width: 1px;
+  height: 36px;
+  border-right: 1.5px dotted rgba(243, 233, 220, 0.25);
+  flex-shrink: 0;
+}
+
+/* ── Monospace Timer ── */
+.voice-timer-display {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f3e9dc;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  text-shadow: 0 0 6px rgba(243, 233, 220, 0.3);
+}
+
+/* =========================================
+   COMPOSER ACTION BUTTONS (Right Aligned)
+========================================= */
+
+.msg-actions {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2;
+}
+
+/* Standard Leather Mic / Re-record button */
+.btn-leather {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  outline: 1.5px solid #7d4433;
+  background: linear-gradient(180deg, #5e3023 0%, #3e1b12 100%);
+  color: #f3e9dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    2px 2px 4px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-leather:hover {
+  background: linear-gradient(180deg, #7d4433 0%, #5e3023 100%);
+  transform: translateY(-1px);
+}
+
+/* Red Tinted Delete / Cancel button */
+.btn-danger {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  outline: 1.5px solid #b33939;
+  background: linear-gradient(180deg, #8b2626 0%, #5c1818 100%);
+  color: #f3e9dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    2px 2px 4px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(180deg, #a63030 0%, #732020 100%);
+  transform: translateY(-1px);
+}
+
+/* Warm Tan Send / Stop button */
+.btn-amber {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  outline: 1.5px solid #d98a48;
+  background: linear-gradient(180deg, #b36b30 0%, #874b1e 100%);
+  color: #f3e9dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    2px 2px 4px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-amber:hover {
+  background: linear-gradient(180deg, #c4793d 0%, #9e5926 100%);
   transform: translateY(-1px);
 }
 
 .send-confirm {
   font-size: 18px;
-  color: #F3E9DC;
+  color: #f3e9dc;
+}
+
+/* ── Retro Success Modal Dialog ── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.success-modal-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(160deg, #482319 0%, #381A12 100%);
+  border: 1.5px solid #c08552;
+  border-radius: 18px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(243, 233, 220, 0.15);
+  padding: 32px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.modal-check-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #c08552 0%, #895737 100%);
+  border: 2px solid #f3e9dc;
+  color: #f3e9dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  box-shadow: 0 4px 12px rgba(192, 133, 82, 0.3);
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f3e9dc;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.modal-subtitle {
+  font-size: 14px;
+  color: rgba(243, 233, 220, 0.9);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.modal-note {
+  font-size: 13px;
+  color: #f3e9dc;
+  margin: 0;
+  font-weight: 500;
+}
+
+.modal-done-btn {
+  margin-top: 8px;
+  padding: 12px 36px;
+  border-radius: 12px;
+  border: none;
+  outline: 1.5px solid #f3e9dc;
+  background: linear-gradient(160deg, #c08552 0%, #a66e3f 100%);
+  color: #f3e9dc;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.3) inset,
+    2px 4px 10px rgba(0, 0, 0, 0.4);
+  transition: all 0.15s ease;
+}
+
+.modal-done-btn:hover {
+  background: #d49661;
+  transform: translateY(-2px);
+}
+
+/* ── Status Feedback Banner ── */
+.form-feedback {
+  margin-top: 10px;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.feedback-success {
+  background: rgba(192, 133, 82, 0.2);
+  color: #f3e9dc;
+  border: 1px solid #c08552;
+  box-shadow: 0 2px 8px rgba(192, 133, 82, 0.15);
+}
+
+.feedback-error {
+  background: rgba(220, 53, 69, 0.2);
+  color: #ffb3b3;
+  border: 1px solid #dc3545;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
 }
 
 /* ── Responsive ── */
@@ -183,14 +475,18 @@
     gap: 12px;
   }
 
-  .input-box { height: 52px; border-radius: 11px; }
+  .input-box { height: 48px; border-radius: 10px; }
 
-  .message-box { min-height: 110px; border-radius: 12px; }
-  .message-box textarea { height: 110px; }
+  .message-box { height: 110px; }
+  .message-box textarea { padding-right: 110px; }
+  .voice-composer-container { padding-right: 150px; gap: 10px; }
+  .btn-leather, .btn-danger, .btn-amber, .preview-play-btn { width: 38px; height: 38px; }
 }
 
-@media (max-width: 520px) {
-  .input-box    { height: 48px; }
-  .input-box input { font-size: 13px; }
-  .message-box textarea { font-size: 13px; padding: 12px 68px 12px 12px; }
+@media (max-width: 480px) {
+  .voice-composer-container { padding-right: 135px; gap: 8px; }
+  .recording-indicator-circle { width: 30px; height: 30px; }
+  .recording-dot-pulse { width: 10px; height: 10px; }
+  .preview-play-btn { width: 36px; height: 36px; }
+  .voice-timer-display { font-size: 13px; }
 }

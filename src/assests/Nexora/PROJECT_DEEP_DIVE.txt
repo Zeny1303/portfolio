@@ -1,0 +1,602 @@
+================================================================================
+PROJECT: NEXORAV2
+TECHNICAL DEEP DIVE & COMPREHENSIVE ARCHITECTURAL ANALYSIS
+================================================================================
+
+--------------------------------------------------------------------------------
+1. 30-SECOND PROJECT PITCH
+--------------------------------------------------------------------------------
+NexoraV2 is a full-stack campus event discovery and hosting platform built for college students across India using Next.js 14 (App Router), TypeScript, MongoDB/Mongoose, and Mapbox GL. It solves the fragmentation of campus event announcements by centralizing event discovery with real-time keyword search, category filtering, automated location geocoding, poster uploads via UploadThing, and Stripe-powered ticket checkouts. Its flagship feature is an interactive Mapbox 3D tilt aerial map featuring live browser GPS geolocation, dynamic radius filtering, and driving directions routing directly to campus venues.
+
+--------------------------------------------------------------------------------
+2. 2-MINUTE PROJECT EXPLANATION
+--------------------------------------------------------------------------------
+NexoraV2 bridges the gap between campus event organizers and college students across hundreds of partner institutions in India. Currently, hackathons, tech fests, workshops, and cultural nights are broadcast through disconnected social media pages, WhatsApp groups, or paper posters, leaving students unaware of events happening nearby.
+
+NexoraV2 provides a unified, full-stack web application where students can search, discover, register for, and navigate to events. When an organizer hosts an event through the platform:
+1. The client-side form validates input parameters via Zod schemas and uploads poster graphics directly to cloud storage using UploadThing.
+2. Upon submission, a Next.js Server Action (`createEvent`) invokes the Mapbox Geocoding API (`geocodeLocation`) to convert human-readable location addresses into exact latitude and longitude coordinates.
+3. The event data, along with geocoded coordinates, category references, and organizer contact links (Instagram, LinkedIn, email), is stored in a MongoDB database using Mongoose ODM.
+4. On the discovery side, students can browse paginated event feeds on the home page or events gallery, filter by category, or open the interactive 3D map (`/map`).
+5. The 3D map uses Mapbox GL to render a dark-v11 style with 3D buildings and terrain. It accesses browser geolocation to calculate exact distance metrics using the Haversine formula, filter events within a dynamic radius slider, and draw turn-by-turn driving directions via the Mapbox Directions API.
+6. For paid events, NexoraV2 integrates Stripe checkout sessions via server actions, handling asynchronous order processing through Svix-verified Clerk authentication webhooks and Stripe payment webhooks.
+
+--------------------------------------------------------------------------------
+3. PROBLEM STATEMENT
+--------------------------------------------------------------------------------
+Campus event ecosystems in Indian universities suffer from three critical bottlenecks:
+1. Information Fragmentation: Event announcements are distributed across isolated Instagram handles, college notice boards, and closed WhatsApp channels, resulting in low cross-campus attendance.
+2. Lack of Geospatial Context & Navigation: Students willing to attend events at neighboring colleges lack exact location mapping, venue landmarking, and travel distance calculations.
+3. High Organizer Friction: Student groups and college clubs lack streamlined, zero-cost digital infrastructure for event registration, poster hosting, payment collection, and attendee tracking.
+
+--------------------------------------------------------------------------------
+4. SOLUTION
+--------------------------------------------------------------------------------
+NexoraV2 delivers an integrated digital platform that:
+- Centralizes campus events into a searchable, filterable repository categorized by event types (Hackathon, Tech Fest, Workshop, Cultural, Sports, Meetup, Concert).
+- Provides an automated event publishing pipeline that handles image hosting (UploadThing) and address-to-coordinate transformation (Mapbox Geocoding).
+- Embeds a 3D aerial map interface powered by Mapbox GL featuring device GPS geolocation, dynamic radius filtering, and turn-by-turn driving routes.
+- Handles user identity synchronization (Clerk + Svix webhooks) and payment processing (Stripe API + Stripe webhooks) to enable seamless ticket purchases and organizer attendee management.
+
+--------------------------------------------------------------------------------
+5. TARGET USER
+--------------------------------------------------------------------------------
+1. College Students: Students looking to discover hackathons, technical competitions, workshops, and cultural fests across nearby Indian universities.
+2. Student Organizers & Clubs: Student lead organizers creating and publicizing campus events, managing registrations, providing social contact channels, and selling tickets.
+3. College Administrators: University staff hosting official inter-college sports leagues, academic summits, or administrative events.
+
+--------------------------------------------------------------------------------
+6. COMPLETE USER FLOW
+--------------------------------------------------------------------------------
+
+A. NEW USER REGISTRATION & SYNC FLOW
+[ User Clicks "Login" / "Get Started" ]
+       ↓
+[ Redirected to Clerk Auth Page / Modal (/sign-in) ]
+       ↓
+[ User Authenticates via Email / OAuth ]
+       ↓
+[ Clerk Issues JWT & Triggers Webhook: POST /api/webhook/clerk ]
+       ↓
+[ Svix Signature Verified in /api/webhook/clerk/route.ts ]
+       ↓
+[ Server Action createUser() Inserts Document into MongoDB User Collection ]
+       ↓
+[ Clerk publicMetadata Updated with MongoDB _id ]
+       ↓
+[ User Redirected to Main Application Area with Authenticated Session ]
+
+B. EVENT DISCOVERY & NAVIGATION FLOW
+[ User Visits Homepage (/) or Events Gallery (/events) ]
+       ↓
+[ User Inputs Search Keyword or Selects Category Pill ]
+       ↓
+[ GET /api/events or Server Action getAllEvents() Queries MongoDB ]
+       ↓
+[ Paginated Event Cards Rendered with Framer Motion 3D Tilt Animations ]
+       ↓
+[ User Clicks "Map" (/map) to View Geospatial Display ]
+       ↓
+[ Browser Geolocation (navigator.geolocation) Fetches Device Coords ]
+       ↓
+[ 3D Mapbox Map Renders Custom Emojis & Category Pins ]
+       ↓
+[ Radius Slider Adjusts Nearby Filter using Haversine Formula ]
+       ↓
+[ User Clicks Event Pin -> Popup Opens with Distance & "Directions" Button ]
+       ↓
+[ User Clicks "Directions" -> Mapbox Directions API Draws Route Line ]
+
+C. EVENT CREATION & PUBLISHING FLOW
+[ Authenticated User Navigates to Host Event (/events/create) ]
+       ↓
+[ User Fills EventForm (Title, Category, Dates, Location, Description, Links) ]
+       ↓
+[ React Hook Form Validates Input against Zod Schema (eventFormSchema) ]
+       ↓
+[ Poster Image Selected -> UploadThing Uploads File (max 4MB) & Returns URL ]
+       ↓
+[ Form Submits -> Server Action createEvent() Executed ]
+       ↓
+[ geocodeLocation() Calls Mapbox Geocoding API -> Returns { lat, lng } ]
+       ↓
+[ Event Document Saved in MongoDB Event Collection with Organizer Ref ]
+       ↓
+[ revalidatePath() Flushes Next.js Cache & User Redirected to Event Page ]
+
+D. TICKET CHECKOUT & ORDER FULFILLMENT FLOW
+[ User Clicks "Get Ticket" / "Buy Ticket" on Event Detail Page (/events/[id]) ]
+       ↓
+[ Checkout Component Invokes Server Action checkoutOrder() ]
+       ↓
+[ Server Action Instantiates Stripe Checkout Session with Event Metadata ]
+       ↓
+[ User Redirected to Hosted Stripe Checkout Gateway ]
+       ↓
+[ User Completes Payment -> Stripe Triggers Webhook: POST /api/webhook/stripe ]
+       ↓
+[ Webhook Validates Stripe Signature & Processes checkout.session.completed ]
+       ↓
+[ createOrder() Inserts Order Document into MongoDB Linked to Buyer & Event ]
+       ↓
+[ User Redirected to /profile -> Purchased Ticket Rendered under "My Tickets" ]
+
+--------------------------------------------------------------------------------
+7. COMPLETE SYSTEM ARCHITECTURE
+--------------------------------------------------------------------------------
+
++------------------------------------------------------------------------------+
+|                              CLIENT / BROWSER                                |
+|   • Next.js 14 App Router (React 18 Server Components & Client Components)    |
+|   • UI Layer: Tailwind CSS, shadcn/ui, Framer Motion, GSAP, Lucide React     |
+|   • Map Layer: Mapbox GL v3.20, React Map GL v8.1 (3D Dark Terrain Style)    |
++--------------------------------------+---------------------------------------+
+                                       |
+                ┌──────────────────────┴──────────────────────┐
+                │ HTTP Requests / Server Actions              │ Webhook Events
+                ▼                                             ▼
++---------------------------------------+   +----------------------------------+
+|          NEXT.JS SERVER CORE          |   |         WEBHOOK ROUTING          |
+|  • lib/actions/event.actions.ts       |   |  • /api/webhook/clerk            |
+|  • lib/actions/user.actions.ts        |   |    (Svix Signature Verified)     |
+|  • lib/actions/order.actions.ts       |   |  • /api/webhook/stripe           |
+|  • lib/actions/category.actions.ts    |   |    (Stripe Signature Verified)   |
+|  • app/api/events/route.ts            |   |  • /api/uploadthing              |
++----------------───+───────────────────+   +──────────────────+---------------+
+                    │                                          │
+                    └──────────────────┬───────────────────────┘
+                                       ▼
++------------------------------------------------------------------------------+
+|                         BACKEND SERVICES & DATABASE                          |
+|   • Database: MongoDB (Mongoose ODM 8.0.3, Cached Connection global.mongoose) |
+|   • Authentication: Clerk Auth (JWT, Session Cookies, OAuth Providers)       |
+|   • Image Storage: UploadThing (Cloud Poster Bucket, 4MB Max File Size)      |
+|   • Payments: Stripe API (Checkout Sessions, USD Currency Conversions)       |
+|   • Geocoding & Routing: Mapbox Places API & Mapbox Driving Directions API   |
++------------------------------------------------------------------------------+
+
+--------------------------------------------------------------------------------
+8. FOLDER STRUCTURE EXPLAINED
+--------------------------------------------------------------------------------
+
+NexoraV2/
+├── .github/
+│   └── instructions/
+│       └── codacy.instructions.md     # Guidelines for Codacy static analysis
+├── app/                               # Next.js 14 App Router Root
+│   ├── (auth)/                        # Authentication Route Group
+│   │   ├── layout.tsx                 # Centered layout for auth pages
+│   │   ├── sign-in/                   # Clerk Sign-In page component
+│   │   └── sign-up/                   # Clerk Sign-Up page component
+│   ├── (root)/                        # Main Application Route Group
+│   │   ├── page.tsx                   # Homepage (Video Hero, Stats, Event List)
+│   │   ├── layout.tsx                 # App layout embedding Header & Footer
+│   │   ├── colleges/                  # College directory feature
+│   │   │   ├── page.tsx               # Server Component extracting college stats
+│   │   │   └── CollegesClient.tsx     # Client Component rendering college cards
+│   │   ├── events/                    # Event feature pages
+│   │   │   ├── page.tsx               # Client-rendered Event Gallery with Search
+│   │   │   ├── events.css             # Component-specific styles for events
+│   │   │   ├── create/                # Create Event page (renders EventForm)
+│   │   │   └── [id]/                  # Dynamic Event Detail route
+│   │   │       ├── page.tsx           # Server Component fetching event details
+│   │   │       └── update/            # Edit Event page
+│   │   ├── map/                       # Geospatial Feature
+│   │   │   └── page.tsx               # Fullscreen 3D Mapbox page
+│   │   ├── profile/                   # User Profile Dashboard
+│   │   │   └── page.tsx               # Server Component fetching user tickets & events
+│   │   └── orders/                    # Organizer Dashboard
+│   │       └── page.tsx               # Orders aggregation table per event
+│   ├── api/                           # API Routes & Webhook Endpoints
+│   │   ├── events/
+│   │   │   └── route.ts               # GET /api/events (Paginated event search)
+│   │   ├── uploadthing/
+│   │   │   ├── core.ts                # UploadThing file router definition
+│   │   │   └── route.ts               # UploadThing route handler export
+│   │   └── webhook/
+│   │       ├── clerk/
+│   │       │   └── route.ts           # Clerk webhook handler (Svix verified)
+│   │       └── stripe/
+│   │           └── route.ts           # Stripe webhook handler (Signature verified)
+│   ├── globals.css                    # Tailwind directives & global glassmorphism CSS
+│   ├── layout.tsx                     # App Root Layout (ClerkProvider wrapper)
+│   ├── not-found.tsx                  # Custom 404 page
+│   └── not-found.css                  # Custom 404 page CSS styles
+├── components/                        # React Components
+│   ├── StaggeredMenu.tsx              # GSAP-animated staggered overlay menu
+│   ├── animations/                    # Framer Motion & Animation components
+│   │   ├── CountUp.tsx                # Number increment counter animation
+│   │   ├── FadeIn.tsx                 # Viewport scroll entrance animation
+│   │   ├── MagneticButton.tsx         # Cursor-magnetic button hover effect
+│   │   ├── ParticleField.tsx          # HTML5 Canvas background particle system
+│   │   ├── SpotlightCursor.tsx        # Radial mouse spotlight follower
+│   │   ├── TextReveal.tsx             # Blur & word-stagger text reveal
+│   │   └── TiltCard.tsx               # 3D perspective card tilt on hover
+│   ├── map/
+│   │   └── MapComponent.tsx           # 1000+ line Mapbox GL 3D mapping engine
+│   ├── shared/                        # Feature-specific business components
+│   │   ├── Card.tsx                   # Event card component
+│   │   ├── CategoryFilter.tsx         # Category dropdown selector
+│   │   ├── Checkout.tsx               # Stripe checkout button component
+│   │   ├── CheckoutButton.tsx         # Auth-conditional checkout wrapper
+│   │   ├── Collection.tsx             # Paginated event grid renderer
+│   │   ├── DeleteConfirmation.tsx     # Radix AlertDialog for deleting events
+│   │   ├── Dropdown.tsx               # Category selection dropdown with inline create
+│   │   ├── EventForm.tsx              # 600-line event creation/editing form
+│   │   ├── EventMap.tsx               # Secondary map presentation wrapper
+│   │   ├── FileUploader.tsx           # React DropZone UploadThing wrapper
+│   │   ├── Footer.tsx                 # Site footer component
+│   │   ├── Header.tsx                 # Navbar with Clerk UserButton & NavItems
+│   │   ├── MobileNav.tsx              # Mobile navigation drawer component
+│   │   ├── NavItems.tsx               # Main menu navigation links
+│   │   ├── Pagination.tsx             # Page navigation control component
+│   │   └── Search.tsx                 # Search input component updating URL params
+│   └── ui/                            # shadcn/ui primitives (button, form, input, dialog, etc.)
+├── constants/
+│   └── index.ts                       # Event form default values object
+├── lib/                               # Core Utilities & Business Logic
+│   ├── actions/                       # Next.js Server Actions ('use server')
+│   │   ├── category.actions.ts        # Category CRUD operations
+│   │   ├── event.actions.ts           # Event CRUD, geocoding & map queries
+│   │   ├── order.actions.ts           # Stripe checkout & order aggregations
+│   │   └── user.actions.ts            # User CRUD & cascade deletions
+│   ├── database/                      # Database Layer
+│   │   ├── index.ts                   # Mongoose global connection handler
+│   │   └── models/                    # Mongoose Data Schemas
+│   │       ├── category.model.ts      # Category model schema
+│   │       ├── event.model.ts         # Event model schema & interface
+│   │       ├── order.model.ts         # Order model schema & interface
+│   │       └── user.model.ts          # User model schema
+│   ├── map/                           # Map Utilities
+│   │   ├── eventsToGeoJSON.ts         # Converts event array to GeoJSON format
+│   │   └── mapLayers.ts               # Mapbox GL layer styling configuration
+│   ├── utils/                         # Helper Functions
+│   │   └── geocode.ts                 # Mapbox Geocoding API wrapper function
+│   ├── uploadthing.ts                 # UploadThing React helper generators
+│   ├── utils.ts                       # Date formatting, price formatting, error handler
+│   └── validator.ts                   # Zod schemas for form validation
+├── public/                            # Static Media Assets
+│   ├── assets/                        # SVG icons & PNG logos
+│   └── videos/                        # Background hero video (dj-night.mp4)
+├── middleware.ts                      # Clerk Auth Middleware configuration
+├── next.config.js                     # Next.js config (Remote image domain: utfs.io)
+├── package.json                       # Project manifest & dependency declaration
+├── tailwind.config.ts                 # Tailwind CSS configuration with custom plugins
+└── tsconfig.json                      # TypeScript strict compiler options
+
+--------------------------------------------------------------------------------
+9. FRONTEND ARCHITECTURE
+--------------------------------------------------------------------------------
+- Framework & Router: Next.js 14 App Router utilizing Server Components for static/dynamic server rendering (`app/(root)/page.tsx`, `app/(root)/events/[id]/page.tsx`) and Client Components (`"use client"`) for interactive pages (`app/(root)/events/page.tsx`, `app/(root)/map/page.tsx`).
+- Styling System: Tailwind CSS 3.3 combined with custom CSS files (`events.css`, `globals.css`). The application uses a sleek dark glassmorphism theme (#0a0a0f background, backdrop-blur filters, semi-transparent white borders).
+- Animations: Hybrid animation stack combining Framer Motion for scroll-triggered viewport entrances (`FadeIn.tsx`), staggered cards (`cardVariants`), and word reveals (`TextReveal.tsx`), alongside GSAP for complex timeline overlays (`StaggeredMenu.tsx`).
+- Form Architecture: Form state managed by React Hook Form (`useForm`), integrated with Zod validation via `@hookform/resolvers/zod`.
+- UI Components: Accessible UI primitives built on top of Radix UI (`@radix-ui/react-dialog`, `@radix-ui/react-alert-dialog`, `@radix-ui/react-select`, `@radix-ui/react-dropdown-menu`).
+
+--------------------------------------------------------------------------------
+10. BACKEND / SERVER ARCHITECTURE
+--------------------------------------------------------------------------------
+NexoraV2 employs a hybrid server architecture combining Next.js Server Actions with REST API endpoints:
+- Server Actions (`lib/actions/`): Server-side TypeScript functions marked with `'use server'` executed directly from client forms and components. They handle database operations, trigger cache revalidation (`revalidatePath`), and perform server-side HTTP fetches (e.g. Mapbox Geocoding).
+- REST API Routes (`app/api/`):
+  - `GET /api/events`: Dynamic route handler serving JSON responses containing search-filtered and paginated events.
+  - `POST /api/webhook/clerk`: Asynchronous endpoint receiving Svix-signed user creation/modification payloads from Clerk.
+  - `POST /api/webhook/stripe`: Asynchronous endpoint receiving raw Stripe signature payloads to finalize order documents upon payment completion.
+  - `/api/uploadthing`: Cloud upload route handler managing file streaming to UploadThing storage.
+
+--------------------------------------------------------------------------------
+11. API / SERVER ACTION FLOWS
+--------------------------------------------------------------------------------
+
+1. GET /api/events
+   - Path: `app/api/events/route.ts`
+   - Purpose: Fetch paginated list of events matching optional search keywords and category.
+   - Parameters: `search` (string), `category` (string), `page` (number, default 1), `limit` (number, default 50).
+   - Database Query: `Event.find({ $or: [ { title: regex }, { description: regex }, { location: regex } ] })`
+   - Population: `.populate("category", "name").populate("organizer", "firstName lastName photo")`
+   - Execution: Uses `Promise.all` to query events and count total documents concurrently using `.lean()`.
+
+2. createEvent Server Action
+   - Path: `lib/actions/event.actions.ts`
+   - Inputs: `{ event, userId, path }`
+   - Logic:
+     1. Invokes `connectToDatabase()`.
+     2. Calls `geocodeLocation(event.location)` to fetch latitude & longitude from Mapbox Places API.
+     3. Executes `Event.create()` with spread parameters, geocoded coordinates, organizer ID, and timestamp.
+     4. Calls `revalidatePath(path)` to purge cached routes.
+     5. Returns serialized JSON object of created event.
+
+3. checkoutOrder Server Action
+   - Path: `lib/actions/order.actions.ts`
+   - Inputs: `{ eventTitle, eventId, price, isFree, buyerId }`
+   - Logic:
+     1. Instantiates `Stripe(process.env.STRIPE_SECRET_KEY)`.
+     2. Calculates cent amount (`price * 100`).
+     3. Calls `stripe.checkout.sessions.create()` passing product metadata (`eventId`, `buyerId`), `success_url` (`/profile`), and `cancel_url` (`/`).
+     4. Executes Next.js `redirect(session.url)`.
+
+4. getOrdersByEvent Server Action
+   - Path: `lib/actions/order.actions.ts`
+   - Inputs: `{ searchString, eventId }`
+   - Logic: Executes MongoDB aggregation pipeline (`Order.aggregate`):
+     - `$lookup` from `users` collection matching `buyer` ID.
+     - `$unwind` buyer document.
+     - `$lookup` from `events` collection matching `event` ID.
+     - `$unwind` event document.
+     - `$project` combined fields (`_id`, `totalAmount`, `createdAt`, `eventTitle`, `buyer` name).
+     - `$match` filtering by `eventId` and buyer name regex.
+
+--------------------------------------------------------------------------------
+12. DATABASE / DATA MODEL
+--------------------------------------------------------------------------------
+NexoraV2 uses MongoDB as its database, managed via Mongoose ODM. Connection pooling is implemented in `lib/database/index.ts` using a cached global promise on `global.mongoose`.
+
+DATABASE NAME: `evently`
+
+SCHEMAS & MODELS:
+
+1. User Model (`lib/database/models/user.model.ts`)
+   - `clerkId` (String, Required, Unique): Clerk authentication ID link.
+   - `email` (String, Required, Unique): User's primary email address.
+   - `username` (String, Required, Unique): Unique handle.
+   - `firstName` (String, Required): User's first name.
+   - `lastName` (String, Required): User's last name.
+   - `photo` (String, Required): URL link to user avatar image.
+
+2. Event Model (`lib/database/models/event.model.ts`)
+   - `title` (String, Required): Title of the event.
+   - `description` (String, Optional): Event summary and details.
+   - `location` (String, Optional): Physical address / venue string.
+   - `coordinates` (Subdocument): `{ lat: Number, lng: Number }`.
+   - `createdAt` (Date, Default: Date.now): Creation timestamp.
+   - `imageUrl` (String, Required): UploadThing image URL for event poster.
+   - `startDateTime` (Date, Default: Date.now): Event start date and time.
+   - `endDateTime` (Date, Default: Date.now): Event end date and time.
+   - `url` (String, Optional): External website or registration URL.
+   - `isFree` (Boolean, Default: false): Free vs paid flag.
+   - `price` (String, Optional): USD price string for paid events.
+   - `category` (Schema.Types.ObjectId, Ref: "Category"): Reference to Category model.
+   - `organizer` (Schema.Types.ObjectId, Ref: "User"): Reference to User model.
+   - `postedBy` (String, Enum: ["admin", "organizer", "student"], Default: "organizer", Required).
+   - `organizerInfo` (Subdocument): `{ name: String, email: String, instagram: String, linkedin: String }`.
+   - Index: `EventSchema.index({ "coordinates.lat": 1, "coordinates.lng": 1 })` for geospatial indexing.
+
+3. Order Model (`lib/database/models/order.model.ts`)
+   - `stripeId` (String, Required, Unique): Stripe Checkout Session transaction ID.
+   - `totalAmount` (String, Optional): Payment total in USD.
+   - `event` (Schema.Types.ObjectId, Ref: "Event"): Reference to Event model.
+   - `buyer` (Schema.Types.ObjectId, Ref: "User"): Reference to User model.
+   - `createdAt` (Date, Default: Date.now): Order timestamp.
+
+4. Category Model (`lib/database/models/category.model.ts`)
+   - `name` (String, Required, Unique): Category title (e.g., "Hackathon", "Tech Fest").
+
+--------------------------------------------------------------------------------
+13. AUTHENTICATION FLOW
+--------------------------------------------------------------------------------
+Authentication is managed via Clerk (`@clerk/nextjs`).
+
+Middleware Protection (`middleware.ts`):
+- `authMiddleware` configures route protection across the application.
+- Public Routes (accessible unauthenticated): `/`, `/events/:id`, `/api/webhook/clerk`, `/api/uploadthing`.
+- Ignored Routes (bypassed by auth middleware): `/api/webhook/clerk`, `/api/uploadthing`, `/api/map-events`.
+- All other routes (`/events/create`, `/events/:id/update`, `/profile`, `/orders`) require an active Clerk session.
+
+Identity Synchronization (`/api/webhook/clerk/route.ts`):
+1. Clerk posts events to `/api/webhook/clerk`.
+2. Handler extracts Svix headers (`svix-id`, `svix-timestamp`, `svix-signature`).
+3. Instantiates `svix.Webhook(process.env.WEBHOOK_SECRET)` and calls `wh.verify(body, headers)`.
+4. Event Types:
+   - `user.created`: Extracts user data, calls `createUser()`, then invokes `clerkClient.users.updateUserMetadata(id, { publicMetadata: { userId: newUser._id } })`.
+   - `user.updated`: Calls `updateUser(clerkId, user)`.
+   - `user.deleted`: Calls `deleteUser(clerkId)`, which unlinks references in `Event` and `Order` collections before deleting the user.
+
+--------------------------------------------------------------------------------
+14. FEATURE-BY-FEATURE INTERNAL WORKING
+--------------------------------------------------------------------------------
+
+1. Dynamic Search & Category Filtering (`app/(root)/events/page.tsx` & `app/(root)/page.tsx`)
+   - Client fetches events from `/api/events?limit=1000` on mount.
+   - Extract unique categories dynamically from returned event payload to build category filter pills.
+   - Filtering logic evaluates search query against `title`, `description`, and `location` using `.toLowerCase().includes()`.
+
+2. Interactive 3D Geospatial Engine (`components/map/MapComponent.tsx`)
+   - Loads Mapbox GL canvas with dark 3D terrain (`mapbox://styles/mapbox/dark-v11`).
+   - Browser geolocation (`navigator.geolocation.watchPosition`) streams user position.
+   - Maps category strings to distinct hex colors and emojis.
+   - Haversine distance formula calculates distance between user GPS coordinates and event markers in kilometers:
+     `d = 2 * R * asin(sqrt(sin²(Δlat/2) + cos(lat1)*cos(lat2)*sin²(Δlng/2)))`
+   - Radius slider dynamically filters displayed markers on the map canvas.
+   - Clicking a pin opens a card overlay showing event poster, distance, and a "Directions" button.
+   - Clicking "Directions" queries the Mapbox Directions API (`https://api.mapbox.com/directions/v5/mapbox/driving/...`) and draws the polyline route layer onto the map canvas.
+
+3. Automated Location Geocoding (`lib/utils/geocode.ts`)
+   - Function `geocodeLocation(place: string)` takes a text address.
+   - Calls `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(place)}.json?limit=1&access_token=${token}`.
+   - Returns `{ lat, lng }` coordinates extracted from `data.features[0].center`.
+
+4. Dynamic College Grouping (`app/(root)/colleges/page.tsx`)
+   - Server Component queries all events containing non-null `location` strings.
+   - Function `extractCollegeName(location)` matches location against institution keywords (`university`, `college`, `institute`, `iit`, `nit`, `bits`, `campus`).
+   - Parses text before commas or dashes to group events by institution name.
+   - Renders a ranked college leaderboard ordered by total active event count.
+
+--------------------------------------------------------------------------------
+15. IMPORTANT FILES AND FUNCTIONS
+--------------------------------------------------------------------------------
+- `lib/database/index.ts` -> `connectToDatabase()`: Manages cached global MongoDB connection.
+- `lib/actions/event.actions.ts` -> `createEvent()`: Server action for creating events with geocoding.
+- `lib/actions/event.actions.ts` -> `getAllEvents()`: Server action executing search & pagination queries.
+- `lib/actions/order.actions.ts` -> `checkoutOrder()`: Server action instantiating Stripe Checkout Sessions.
+- `lib/actions/user.actions.ts` -> `deleteUser()`: Cascading delete action unlinking user references.
+- `components/map/MapComponent.tsx`: Master 3D Mapbox GL integration component.
+- `components/shared/EventForm.tsx`: Primary form component with Zod validation & UploadThing integration.
+- `app/api/webhook/clerk/route.ts`: Clerk user sync webhook endpoint with Svix validation.
+- `app/api/webhook/stripe/route.ts`: Stripe payment completion webhook endpoint.
+
+--------------------------------------------------------------------------------
+16. STATE MANAGEMENT
+--------------------------------------------------------------------------------
+- Server State: Managed via Next.js Server Components and Server Actions, leveraging `revalidatePath()` for automatic server cache invalidation.
+- Form State: Local component state handled by `react-hook-form` (`useForm`) with reactive watching (`form.watch("postedBy")`).
+- URL State: URL query parameters (`searchParams`) act as single source of truth for search text (`?query=`), selected category (`?category=`), and pagination (`?page=`) on server-rendered routes using `query-string`.
+- Map State: React `useState` and `useRef` hooks in `MapComponent.tsx` tracking active markers, card positions, user GPS coordinates, radius slider limits, and route geometry data.
+
+--------------------------------------------------------------------------------
+17. EXTERNAL SERVICES
+--------------------------------------------------------------------------------
+1. Clerk (`@clerk/nextjs`): User authentication, session management, OAuth providers, and user metadata management.
+2. MongoDB Atlas / Local MongoDB (`mongoose`): Document database storing Users, Events, Orders, and Categories.
+3. Stripe API (`stripe`, `@stripe/stripe-js`): Payment gateway managing checkout sessions and transaction webhooks.
+4. UploadThing (`uploadthing`, `@uploadthing/react`): Cloud file storage for uploading and hosting event poster images.
+5. Mapbox GL / Geocoding / Directions API (`mapbox-gl`, `react-map-gl`): Vector 3D map tiles, geocoding address conversion, and driving routes.
+6. Svix (`svix`): Cryptographic webhook signature verification for Clerk webhooks.
+
+--------------------------------------------------------------------------------
+18. FILE UPLOAD / PROCESSING FLOW
+--------------------------------------------------------------------------------
+File uploads are handled by UploadThing:
+1. File router defined in `app/api/uploadthing/core.ts`:
+   - Endpoint: `imageUploader`
+   - Constraints: `maxFileSize: "4MB"`, `maxFileCount: 1`, image MIME types.
+2. Route handler exported in `app/api/uploadthing/route.ts` via `createRouteHandler`.
+3. Client component `components/shared/FileUploader.tsx` wraps React Dropzone (`react-dropzone`).
+4. In `EventForm.tsx`, when a user drops an image file:
+   - Form checks `file.size` (rejects if > 4MB with toast notification).
+   - Form checks `file.type.startsWith("image/")`.
+   - Calls `startUpload(files)` from `useUploadThing('imageUploader')`.
+   - UploadThing uploads file to cloud storage (`utfs.io`) and returns asset URL.
+   - Returned URL is assigned to `values.imageUrl` before invoking `createEvent()`.
+
+--------------------------------------------------------------------------------
+19. ERROR HANDLING
+--------------------------------------------------------------------------------
+- API Error Handling: Routes return `NextResponse.json({ error: message }, { status: 500 })` on caught exceptions.
+- Server Action Errors: Exceptions caught in try/catch blocks are passed to `handleError(error)` in `lib/utils.ts`, which logs errors to console or throws standardized error messages.
+- Form Validation Errors: React Hook Form displays inline field error messages defined in Zod schema (`lib/validator.ts`).
+- UI Toast Notifications: Toast notifications powered by `sonner` notify users of image upload failures, size limits, or validation issues.
+- Webhook Signature Failures: Webhooks return HTTP 400 status codes when Svix or Stripe headers fail signature validation.
+- Missing Map / Geocoding Coordinates: `getMapEvents()` filters out events lacking valid coordinates; `geocodeLocation()` returns `null` on geocoding failure without breaking event creation.
+
+--------------------------------------------------------------------------------
+20. SECURITY ANALYSIS
+--------------------------------------------------------------------------------
+
+IMPLEMENTED SECURITY FEATURES:
+- Authenticated Middleware: Clerk middleware enforces session authentication on private routes (`/events/create`, `/profile`, `/orders`).
+- Webhook Signature Verification: Cryptographic verification of Svix headers on Clerk webhooks and Stripe signatures on payment webhooks prevents request forgery.
+- Input Schema Validation: Zod schemas enforce type safety, character limits, URL patterns, and required fields.
+- Environment Variable Isolation: Sensitive keys (`CLERK_SECRET_KEY`, `STRIPE_SECRET_KEY`, `MONGODB_URI`, `UPLOADTHING_SECRET`, `WEBHOOK_SECRET`) are kept strictly on the server and excluded from client bundles.
+
+SECURITY IMPROVEMENTS NEEDED:
+- API Rate Limiting: No rate limiting configured on API endpoints (`/api/events`) or Server Actions (susceptible to spam).
+- Explicit CORS Policy: Webhook and API endpoints rely on default Next.js CORS behavior without explicit origin restrictions.
+- Hardcoded Admin Email: `ADMIN_EMAIL = "snehakashyap9920@gmail.com"` is hardcoded in `EventForm.tsx` instead of being managed via server-side environment variables or role-based access control (RBAC).
+
+--------------------------------------------------------------------------------
+21. PERFORMANCE ANALYSIS
+--------------------------------------------------------------------------------
+- Server-Side Rendering (SSR) & Server Components: Homepage hero and event details pages render on the server, minimizing client JavaScript bundle size.
+- Database Query Optimization: `.lean()` is used on read-only queries in `GET /api/events` and `/colleges` to return plain JavaScript objects instead of heavy Mongoose documents.
+- Database Indexing: Geospatial index on `coordinates.lat` and `coordinates.lng` speeds up location queries.
+- Image Domain Optimization: `next.config.js` configures remote patterns for `utfs.io` to allow Next.js `<Image>` automatic optimization and webp conversion.
+- Benchmarks: No performance benchmarks or load testing metrics exist in the repository ("No benchmark was found in the repository.").
+
+--------------------------------------------------------------------------------
+22. SCALABILITY
+--------------------------------------------------------------------------------
+
+CURRENT ARCHITECTURE:
+- Serverless Next.js App Router deployed on Vercel.
+- MongoDB Atlas database instance with Mongoose connection caching.
+- Third-party SaaS handling Auth (Clerk), Media (UploadThing), Maps (Mapbox), and Payments (Stripe).
+
+POSSIBLE FUTURE ARCHITECTURE FOR HIGH TRAFFIC (10x - 100x Growth):
+- Redis Caching Layer: Cache popular event queries and categories in Redis to prevent database hits on the home page.
+- Database Geospatial Queries: Upgrade `coordinates` index to a formal MongoDB 2dsphere index (`$near`, `$geoWithin`) for spatial queries instead of fetching all markers and calculating Haversine distance in client memory.
+- Background Job Queue: Move Mapbox geocoding and email notifications to a background worker queue (e.g. BullMQ / QStash).
+- CDN Asset Distribution: Utilize Cloudfront or Cloudflare CDN caching for static poster images.
+
+--------------------------------------------------------------------------------
+23. IMPORTANT ENGINEERING DECISIONS
+--------------------------------------------------------------------------------
+
+1. Decision: Next.js 14 App Router with Server Actions instead of Traditional REST/Express Backend
+   - Why: Eliminates the need for a separate backend codebase, enables end-to-end TypeScript type safety, and automatically handles server caching via `revalidatePath()`.
+   - Trade-off: Server Actions are tightly coupled to Next.js host environments and require careful authorization checks.
+
+2. Decision: Clerk Authentication with Webhook Synchronization to MongoDB
+   - Why: Clerk provides robust pre-built auth UI and multi-factor capabilities while storing user references in MongoDB allows relational joins (`organizer`, `buyer`) across Events and Orders.
+   - Trade-off: Introduces event-driven eventual consistency risks if webhooks fail or experience delivery latency.
+
+3. Decision: Mapbox GL 3D Canvas instead of 2D Leaflet / Google Maps
+   - Why: Provides superior visual aesthetics (3D tilt, dark terrain, 3D buildings) aligned with modern UI design requirements.
+   - Trade-off: Higher client bundle size and WebGL GPU consumption on low-end mobile devices.
+
+--------------------------------------------------------------------------------
+24. HARDEST TECHNICAL PROBLEMS & SOLUTIONS
+--------------------------------------------------------------------------------
+
+PROBLEM 1: Asynchronous Webhook Synchronization & Identity Mapping
+- Root Cause: User identity originates in Clerk, but application logic requires MongoDB ObjectIds for event ownership and ticket orders.
+- Implementation: Built a Svix-verified webhook handler (`/api/webhook/clerk`) that catches `user.created`, creates the MongoDB document, and immediately invokes `clerkClient.users.updateUserMetadata()` to write the internal MongoDB `_id` back into Clerk's `publicMetadata`.
+- Result: Client components can access `user.publicMetadata.userId` instantly via `useUser()` without additional database roundtrips.
+
+PROBLEM 2: Address-to-3D-Map Geocoding Pipeline
+- Root Cause: Organizers enter text addresses ("BBD University, Lucknow") which cannot be plotted on Mapbox WebGL canvas without numerical coordinates.
+- Implementation: Integrated `geocodeLocation()` directly into the `createEvent` server action, fetching Mapbox Places API results server-side before persisting the event document with embedded `coordinates: { lat, lng }`.
+
+--------------------------------------------------------------------------------
+25. PRODUCTION IMPROVEMENTS NEEDED
+--------------------------------------------------------------------------------
+1. Move `ADMIN_EMAIL` from hardcoded client file (`EventForm.tsx`) to server-side RBAC or environment variables.
+2. Implement MongoDB 2dsphere geospatial index for server-side location queries.
+3. Add rate limiting middleware (e.g. Upstash Redis rate limiter) to API routes and server actions.
+4. Replace alert dialog debugging statements (`alert("Error: " + String(error))`) in `app/(root)/events/page.tsx` with proper UI error boundaries.
+5. Add automated unit and integration tests (Jest / Playwright).
+
+--------------------------------------------------------------------------------
+26. TECHNICAL INTERVIEW QUESTIONS & ANSWERS
+--------------------------------------------------------------------------------
+
+Q1: How does NexoraV2 handle user authentication and link users to database records?
+A: NexoraV2 uses Clerk for authentication. When a user registers, Clerk emits a `user.created` webhook event to `/api/webhook/clerk`. The server verifies the cryptographic signature using Svix headers (`svix-id`, `svix-timestamp`, `svix-signature`). Once verified, the handler calls `createUser()` to create a MongoDB document in the `User` collection. It then calls `clerkClient.users.updateUserMetadata` to store the internal MongoDB `_id` inside Clerk's `publicMetadata.userId`, making it accessible across the client via `useUser()`.
+
+Q2: How does the application convert text location addresses into 3D map coordinates?
+A: When an organizer submits the `EventForm`, the `createEvent` Server Action intercepts the form submission on the server. Before saving to MongoDB, it passes the location string to `geocodeLocation()`, which queries the Mapbox Geocoding API (`v5/mapbox.places`). Mapbox returns geographic coordinates `[longitude, latitude]`, which are mapped to `{ lat, lng }` and stored directly inside the `Event` document's `coordinates` field.
+
+Q3: How are ticket purchases processed securely?
+A: When a user clicks "Buy Ticket", `CheckoutButton.tsx` invokes the `checkoutOrder` Server Action. The server instantiates a Stripe Checkout Session using the `stripe` Node SDK, embedding `eventId` and `buyerId` in session metadata. Upon successful payment, Stripe sends a `checkout.session.completed` webhook to `/api/webhook/stripe`. The server verifies the Stripe signature, extracts the metadata, and invokes `createOrder()` to persist the transaction in the `Order` collection.
+
+--------------------------------------------------------------------------------
+27. DIFFICULT FOLLOW-UP QUESTIONS & ANSWERS
+--------------------------------------------------------------------------------
+
+Q: What happens if traffic to the Map page increases 100x?
+A: Currently, `MapComponent.tsx` fetches all map events and performs distance calculations in client browser memory using the Haversine formula. At 100x scale, this would cause client-side browser lag and heavy database payload sizes. The solution is to migrate to MongoDB's native 2dsphere index and `$near` geospatial operator, performing spatial bounding box filtering on the database level and returning only markers within the visible viewport.
+
+Q: What happens if a Clerk webhook fails to deliver when a user signs up?
+A: If the webhook fails or times out, the user exists in Clerk but lacks a corresponding MongoDB `User` document, causing Server Actions like `createEvent` to fail. To make this resilient in production, we should implement a lazy sync fallback: whenever an authenticated user accesses a protected route, middleware checks if `sessionClaims.userId` exists; if missing, it queries MongoDB by `clerkId` or auto-creates the document on demand.
+
+--------------------------------------------------------------------------------
+28. CLAIMS NOT SUPPORTED BY THE CODEBASE
+--------------------------------------------------------------------------------
+The following metrics or capabilities are NOT supported by the source code and must NOT be claimed in technical discussions:
+1. Dynamic Metrics: Marketing stats in UI text ("500+ Active Events", "200+ Partner Colleges", "10k+ Students") are hardcoded string literals in `app/(root)/page.tsx`, NOT dynamic database aggregation counts.
+2. Performance Benchmarks: No benchmark tests, latency metrics, or throughput numbers exist in the repository ("No benchmark was found in the repository.").
+3. Native Mobile App: NexoraV2 is a web application optimized for mobile browsers, NOT a native iOS/Android React Native application.
+4. Real-Time WebSockets: Event updates use Next.js cache revalidation (`revalidatePath`), NOT real-time Socket.io or WebSockets.
+
+--------------------------------------------------------------------------------
+29. RESUME-WORTHY TECHNICAL POINTS
+--------------------------------------------------------------------------------
+- Engineered a full-stack campus event platform using Next.js 14 App Router, TypeScript, and MongoDB/Mongoose.
+- Implemented real-time 3D geospatial mapping with Mapbox GL, browser GPS geolocation, Haversine radius filtering, and Mapbox Directions API routing.
+- Built an automated event hosting pipeline integrating server-side Mapbox address geocoding and UploadThing cloud file uploads.
+- Integrated Clerk authentication with Svix-verified webhook handlers for asynchronous identity synchronization into MongoDB.
+- Developed end-to-end ticket checkout flows using Stripe Checkout Sessions and signature-verified webhook order processing.
+
+--------------------------------------------------------------------------------
+30. FINAL PROJECT SUMMARY
+--------------------------------------------------------------------------------
+NexoraV2 is a modern, production-grade Next.js 14 full-stack event discovery platform. It demonstrates mastery over Next.js App Router architecture, Server Actions, Mongoose ODM database modeling, third-party webhook integrations (Clerk, Stripe, UploadThing), and advanced WebGL 3D geospatial mapping with Mapbox GL.

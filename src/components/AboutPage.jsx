@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { NavPanel, SiteHeader } from './Navbar'
+import WorkPage from './WorkPage'
+import ContactBoard from './contactBoard/ContactBoard'
 import TechnologySection from './TechnologySection'
 import heroImage from '../assests/HeroImage.png'
 import bkBg from '../assests/bk.png'
@@ -122,10 +124,25 @@ export default function AboutPage() {
 
   function handleNavLink(label) {
     tilt(0, 0)
-    if (label === 'Work') navigate('/work')
-    if (label === 'About') navigate('/about')
-    if (label === 'Contact') navigate('/contact')
-    if (label === 'Home') navigate('/')
+    if (label === 'Work') {
+      const el = document.getElementById('work-section')
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      else navigate('/work')
+    }
+    if (label === 'About') {
+      const el = containerRef.current?.querySelector('.about-section-card')
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      else navigate('/about')
+    }
+    if (label === 'Contact') {
+      const el = document.getElementById('contact-section')
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      else navigate('/contact')
+    }
+    if (label === 'Home') {
+      if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      else navigate('/')
+    }
   }
 
   return (
@@ -528,6 +545,18 @@ export default function AboutPage() {
             </div>
 
             <TechnologySection scrollerRef={containerRef} />
+          </section>
+
+          {/* ═══════════════════════════════════════════
+              3. WORK / PROJECTS SECTION CARD (SLIDES UP OVER SKILLS)
+          ═══════════════════════════════════════════ */}
+          <WorkPage scrollerRef={containerRef} embedded={true} />
+
+          {/* ═══════════════════════════════════════════
+              4. CONTACT SECTION CARD (SLIDES UP OVER WORK)
+          ═══════════════════════════════════════════ */}
+          <section className="contact-section-card" id="contact-section">
+            <ContactBoard />
           </section>
         </div>
       </div>

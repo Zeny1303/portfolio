@@ -2,12 +2,30 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { projects } from '../data/projectsData'
 import { SiteHeader, NavPanel } from './Navbar'
+import CortexProjectDetailPage from './cortex/CortexProjectDetailPage'
+import VybeProjectDetailPage from './vybe/VybeProjectDetailPage'
+import TaskflowProjectDetailPage from './taskflow/TaskflowProjectDetailPage'
 import './ProjectDetailPage.css'
 
 export default function ProjectDetailPage() {
   const { projectId } = useParams()
   const navigate = useNavigate()
   const [navOpen, setNavOpen] = useState(false)
+
+  // Render custom Cortex detail page if projectId is 'cortex'
+  if (projectId && projectId.toLowerCase() === 'cortex') {
+    return <CortexProjectDetailPage />
+  }
+
+  // Render custom Vybe detail page if projectId is 'vybe'
+  if (projectId && projectId.toLowerCase() === 'vybe') {
+    return <VybeProjectDetailPage />
+  }
+
+  // Render custom TaskFlow detail page if projectId is 'taskflow'
+  if (projectId && projectId.toLowerCase() === 'taskflow') {
+    return <TaskflowProjectDetailPage />
+  }
 
   const project = projects.find((p) => p.id.toLowerCase() === (projectId || '').toLowerCase())
 

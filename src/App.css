@@ -35,16 +35,16 @@
 }
 
 body {
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
   font-family: 'Chubbo', 'Anton', sans-serif;
   background: var(--ink);
+  overflow-x: hidden;
 }
 
 #root {
-  height: 100%;
   width: 100%;
+  min-height: 100vh;
 }
 
 /* ── Home: main scrollable surface (used only on /) ── */
@@ -60,10 +60,9 @@ body {
 }
 .main-surface::-webkit-scrollbar { display: none; }
 
-/* ── About, Work & Contact pages scroll freely ── */
+/* ── About & Contact pages scroll freely ── */
 .about-page,
 .editorial-about-wrapper,
-.work-page,
 .contact-page {
   overflow-y: auto;
   height: 100vh;

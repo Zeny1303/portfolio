@@ -1,0 +1,609 @@
+================================================================================
+PROJECT: TASKFLOW
+TECHNICAL DEEP DIVE & ARCHITECTURAL REFERENCE
+================================================================================
+Target Audience: Senior Software Engineers, Technical Interviewers, Architecture Reviewers
+Codebase Location: e:\Sprint
+
+================================================================================
+1. 30-SECOND PROJECT PITCH
+================================================================================
+TaskFlow is an enterprise team task management platform engineered with React 19, TypeScript, Django 4.2+, and Django REST Framework (DRF). It provides multi-tenant project workspace isolation, dynamic Kanban workflow boards, real-time workload analytics, and strict server-side Role-Based Access Control (RBAC). Project Admins maintain complete workspace control, while Members are strictly scoped to viewing and updating their assigned tasks. TaskFlow is fully containerized with Docker and ready for scalable production deployment.
+
+================================================================================
+2. 2-MINUTE PROJECT EXPLANATION
+================================================================================
+TaskFlow addresses a critical vulnerability in team productivity software: client-side security traps where unauthorized actions are hidden in the UI but left unprotected on the API layer. 
+
+In TaskFlow, the frontend is built as a single-page application using React 19, TypeScript, Axios, and Recharts. It features a custom design system with instant dark/light theme switching, protected route guards, and an Axios interceptor that manages JWT token injection and catches 401 unauthenticated states gracefully via custom browser events.
+
+The backend is built with Python 3.11 and Django REST Framework. Rather than relying on standard session cookies, it implements a custom stateless `JWTAuthentication` class that decodes HS256 tokens signed with a 7-day expiration. All business rules—such as restricting task creation to Project Admins, or scoping non-admin task lists strictly to tasks assigned to that specific user—are enforced at the Django view layer using ORM query filters and custom HTTP exceptions.
+
+Data is stored in a relational PostgreSQL (or SQLite local) database across four normalized models: `User`, `Project`, `ProjectMember`, and `Task`. Cascading foreign keys ensure referential integrity when projects or users are removed. The entire system is production-configured with Gunicorn WSGI and Docker.
+
+================================================================================
+3. PROBLEM STATEMENT
+================================================================================
+Engineering teams often suffer from task management tools that either:
+1. Over-complicate simple task tracking with excessive configuration overhead.
+2. Lack server-side authorization enforcement, allowing non-admin members to overwrite project configurations, delete tasks, or view sensitive team assignments by directly calling API endpoints.
+3. Require cumbersome session management and heavy server-side state that complicates horizontal scaling.
+
+================================================================================
+4. SOLUTION
+================================================================================
+TaskFlow delivers a streamlined, high-performance platform featuring:
+- Server-Enforced RBAC: Strict backend verification in DRF views ensures members cannot manipulate unauthorized tasks or project rosters regardless of client-side requests.
+- Stateless JWT Architecture: Completely stateless backend authentication allowing seamless horizontal scaling across backend nodes.
+- Isolated Project Workspaces: Clear separation between project teams, ensuring members only see projects they explicitly belong to.
+- Executive Analytics: Real-time aggregated metrics and workload distribution charts to eliminate bottlenecks.
+
+================================================================================
+5. TARGET USERS
+================================================================================
+- Software Development Teams needing clear task ownership and stage tracking (To Do, In Progress, Done).
+- Project Managers needing real-time workload analytics and overdue task tracking.
+- HR & Operations Teams managing multi-department employee task delegation.
+
+================================================================================
+6. COMPLETE USER FLOW
+================================================================================
+User Journey Breakdown:
+
+1. Authentication Flow:
+   Landing / AuthPage (/login)
+   ↓ User enters credentials (email, password)
+   ↓ Frontend POSTs to /api/auth/login
+   ↓ DRF LoginView verifies password hash via passlib (pbkdf2_sha256/bcrypt)
+   ↓ Backend returns access_token & user object
+   ↓ AuthContext stores token in localStorage ('taskflow_token')
+   ↓ PrivateRoute detects isAuthenticated = true → Redirects to Dashboard (/)
+
+2. Executive Dashboard Triage Flow:
+   Dashboard Page (/)
+   ↓ Page mounts → Promise.all calls GET /api/dashboard and GET /api/projects
+   ↓ Fetches per-project task lists to identify overdue tasks
+   ↓ Renders 6 StatCards (Total Tasks, To Do, In Progress, Done, Overdue, My Tasks)
+   ↓ Renders Recharts Donut Chart (Tasks by Status) & Bar Chart (Tasks per Member)
+   ↓ Displays Overdue Task Triage Table with direct links to project boards
+
+3. Project Management Flow:
+   Projects Explorer (/projects)
+   ↓ Displays grid of user-accessible projects
+   ↓ User clicks "New Project" → Opens modal form
+   ↓ Frontend POSTs name & description to /api/projects
+   ↓ Backend creates Project & creates ProjectMember with role = 'admin'
+   ↓ Grid updates; Admin clicks project card → Navigates to /projects/:id
+
+4. Kanban Board & Task Execution Flow:
+   Project Detail Page (/projects/:id)
+   ↓ Fetches project info (GET /api/projects/:id) and task roster (GET /api/tasks/projects/:id/tasks)
+   ↓ Admin view: Displays all project tasks across To Do, In Progress, Done
+   ↓ Member view: Displays assigned tasks only
+   ↓ Admin clicks "New Task" → POSTs to /api/tasks/projects/:id/tasks
+   ↓ User clicks task card → PUTs /api/tasks/:id with updated status (todo → in_progress → done)
+   ↓ Card animates into new column status; state updates locally
+
+5. Member Roster Management Flow:
+   Project Members Tab (/projects/:id?tab=members)
+   ↓ Displays list of current project members and their roles (Admin / Member)
+   ↓ Admin enters new member email & selects role → POSTs /api/projects/:id/members
+   ↓ Backend verifies target user exists & creates ProjectMember record
+   ↓ Roster refreshes; Admin can click "Remove" to DELETE /api/projects/:id/members/:uid
+
+================================================================================
+7. COMPLETE SYSTEM ARCHITECTURE
+================================================================================
+System Architecture Diagram (ASCII):
+
++-------------------------------------------------------------------------------+
+|                            CLIENT LAYER (Browser)                             |
+|                                                                               |
+|   +-----------------------------------------------------------------------+   |
+|   |                        React 19 Single Page App                       |   |
+|   |                                                                       |   |
+|   |  - State Management: AuthContext, ThemeContext, Local Component State |   |
+|   |  - Routing: React Router v6 (PublicRoute, PrivateRoute, Layout)       |   |
+|   |  - HTTP: Axios instance (api.ts) with Bearer token interceptor         |   |
+|   |  - Analytics: Recharts (PieChart, BarChart)                           |   |
+|   |  - Toast Notifications: React Hot Toast                              |   |
+|   +-----------------------------------┬-----------------------------------+   |
++---------------------------------------│---------------------------------------+
+                                        │ HTTPS / REST API / JSON
+                                        ▼
++-------------------------------------------------------------------------------+
+|                           BACKEND LAYER (Django DRF)                          |
+|                                                                               |
+|   +-----------------------------------------------------------------------+   |
+|   |                    Gunicorn WSGI Server (Port 8000)                   |   |
+|   +-----------------------------------┬-----------------------------------+   |
+|                                       │                                       |
+|   +-----------------------------------▼-----------------------------------+   |
+|   |                   Django Security & CORS Middleware                   |   |
+|   |                  (CorsMiddleware, SecurityMiddleware)                 |   |
+|   +-----------------------------------┬-----------------------------------+   |
+|                                       │                                       |
+|   +-----------------------------------▼-----------------------------------+   |
+|   |                    Custom JWT Authentication Backend                  |   |
+|   |            (api.authentication.JWTAuthentication class)              |   |
+|   |          - Extracts Bearer Token from Authorization Header            |   |
+|   |          - Decodes HS256 JWT Payload (sub = user_id)                  |   |
+|   |          - Attaches authenticated User model to request.user          |   |
+|   +-----------------------------------┬-----------------------------------+   |
+|                                       │                                       |
+|   +-----------------------------------▼-----------------------------------+   |
+|   |                     Django REST Framework Views                       |   |
+|   |    SignupView · LoginView · ProjectListCreateView · ProjectDetailView |   |
+|   |     ProjectMemberAddView · TaskListCreateView · DashboardView         |   |
+|   |    - Validates Input via DRF Serializers                              |   |
+|   |    - Enforces Role-Based Access Control (Admin vs Member)             |   |
+|   +-----------------------------------┬-----------------------------------+   |
+|                                       │                                       |
+|   +-----------------------------------▼-----------------------------------+   |
+|   |                           Django ORM Layer                            |   |
+|   |               Models: User, Project, ProjectMember, Task              |   |
+|   +-----------------------------------┬-----------------------------------+   |
++---------------------------------------│---------------------------------------+
+                                        │ SQL Queries
+                                        ▼
++-------------------------------------------------------------------------------+
+|                           DATABASE LAYER (Relational)                         |
+|                                                                               |
+|   +-----------------------------------------------------------------------+   |
+|   |                      PostgreSQL 15+ / SQLite 3                        |   |
+|   |                                                                       |   |
+|   |  - users (id, name, email [INDEXED], hashed_password, created_at)    |   |
+|   |  - projects (id, name, description, created_by_id, created_at)       |   |
+|   |  - project_members (id, project_id, user_id, role, joined_at)        |   |
+|   |  - tasks (id, title, description, status, priority, due_date, ...)   |   |
+|   +-----------------------------------------------------------------------+   |
++-------------------------------------------------------------------------------+
+
+================================================================================
+8. FOLDER STRUCTURE & DIRECTORY ANALYSIS
+================================================================================
+Repository File Tree:
+
+e:\Sprint\
+├── backend/
+│   ├── api/
+│   │   ├── migrations/
+│   │   │   └── 0001_initial.py       # Auto-generated database table schema definition
+│   │   ├── __init__.py
+│   │   ├── apps.py                   # Django app config for 'api'
+│   │   ├── authentication.py         # Custom JWT auth logic, token generator, passlib helpers
+│   │   ├── models.py                 # Core ORM Models: User, Project, ProjectMember, Task
+│   │   ├── serializers.py            # DRF serializers for inputs, outputs & analytics
+│   │   ├── urls.py                   # Routing table for /api/* endpoints
+│   │   └── views.py                  # API controller views & RBAC validation logic
+│   ├── taskflow_backend/
+│   │   ├── __init__.py
+│   │   ├── asgi.py                   # ASGI application entrypoint
+│   │   ├── settings.py               # Main settings (INSTALLED_APPS, DATABASES, REST_FRAMEWORK)
+│   │   ├── urls.py                   # Root URL router (/health, /admin/, /api/)
+│   │   └── wsgi.py                   # WSGI application entrypoint for Gunicorn
+│   ├── Dockerfile                    # Containerization spec for Python 3.11 backend
+│   ├── manage.py                     # Django CLI management executable
+│   ├── requirements.txt              # Dependencies (Django, DRF, PyJWT, passlib, gunicorn)
+│   ├── seed.py                       # Automated seeder populating 23 users, 5 projects, 24 tasks
+│   ├── start.sh                      # Production shell entrypoint (migrate + seed + gunicorn)
+│   └── wait-for-db.sh                # Postgres database connection probe script
+├── frontend/
+│   ├── public/
+│   │   └── index.html                # Single-page HTML entry template
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── Layout.tsx            # Main shell component with responsive sidebar & topbar
+│   │   ├── pages/
+│   │   │   ├── AuthPage.tsx          # Login & Signup view with form validation
+│   │   │   ├── Dashboard.tsx         # Analytics dashboard with Recharts & overdue table
+│   │   │   ├── ProjectDetailPage.tsx # Kanban board, member roster & project settings tabs
+│   │   │   ├── ProjectsPage.tsx     # Project grid & creation modal
+│   │   │   └── SettingsPage.tsx      # Profile settings & theme selector
+│   │   ├── api.ts                    # Axios HTTP client with request token & response 401 interceptors
+│   │   ├── App.tsx                   # React Router route tree & public/private guards
+│   │   ├── AuthContext.tsx           # Global authentication state context & hook
+│   │   ├── index.css                 # Custom CSS design tokens, light/dark themes, components
+│   │   ├── index.tsx                 # React DOM root render file
+│   │   ├── ThemeContext.tsx          # Theme state provider (light/dark)
+│   │   └── types.ts                  # TypeScript interfaces matching backend models
+│   ├── Dockerfile                    # Multi-stage Dockerfile compiling React app into Nginx
+│   ├── docker-entrypoint.sh         # Runtime environment variable injection for Nginx
+│   ├── nginx.conf                    # Nginx web server config handling React Router SPA fallbacks
+│   ├── package.json                  # Frontend dependencies & npm scripts
+│   └── tsconfig.json                 # TypeScript compiler options
+├── scripts/
+│   └── test_login.py                 # Utility script testing auth endpoint
+├── docker-compose.yml                # Multi-container orchestration spec
+└── README.md                         # Main repository GitHub documentation
+
+================================================================================
+9. FRONTEND ARCHITECTURE
+================================================================================
+- Framework: React 19 (SPA mode)
+- Language: TypeScript 4.9
+- Navigation & Guarding: React Router v6
+  - `PublicRoute`: Redirects authenticated users away from `/login` to `/`.
+  - `PrivateRoute`: Blocks unauthenticated users, displaying a `SplashScreen` while initializing state, then redirecting to `/login`.
+- Global State Management:
+  - `AuthContext`: Holds `user`, `token`, `isAuthenticated`, `isLoading`. Syncs with browser `localStorage` (`taskflow_token`, `taskflow_user`). Listens to window custom event `taskflow:logout` for soft unauthenticated resets.
+  - `ThemeContext`: Toggles `dark` / `light` mode. Applies `data-theme` attribute to `document.documentElement` and stores choice in `tf-theme`.
+- Data Fetching: Axios instance (`api.ts`).
+  - Request Interceptor: Reads `localStorage.getItem('taskflow_token')` and attaches `Authorization: Bearer <token>`.
+  - Response Interceptor: Listens for `401 Unauthorized`. For non-auth routes, dispatches `taskflow:logout` custom event to clear React state without a forced browser page reload.
+- UI & Styling: Custom CSS (`index.css`) featuring modern CSS custom properties (`var(--bg)`, `var(--text)`, `var(--accent)`), flexbox/grid layouts, custom badge styles, and smooth transition animations.
+- Visualization: `recharts` library used in `Dashboard.tsx` for responsive donut and bar charts.
+
+================================================================================
+10. BACKEND ARCHITECTURE
+================================================================================
+- Runtime: Python 3.11+
+- Framework: Django 4.2+ & Django REST Framework (DRF) 3.14+
+- WSGI Web Server: Gunicorn 21.2+
+- Authentication Middleware: Custom `JWTAuthentication` class (`api.authentication.JWTAuthentication`).
+  - Implements `BaseAuthentication`.
+  - Parses `Authorization: Bearer <token>`.
+  - Decodes payload using `jwt.decode(token, SECRET_KEY, algorithms=["HS256"])`.
+  - Validates `sub` claim (user ID) and loads `User.objects.get(pk=user_id)`.
+  - Returns `(user, token)` tuple to DRF, populating `request.user`.
+- Authorization Logic: Custom view helpers in `api/views.py`:
+  - `get_current_user_or_raise(request)`: Ensures `request.user` is present; raises HTTP 401 if missing.
+  - `get_member_or_404(project_id, user_id)`: Checks if user belongs to project; raises HTTP 403 if not found.
+  - `require_admin(project_id, user_id)`: Verifies user role is `'admin'`; raises HTTP 403 if user is a standard member.
+
+================================================================================
+11. TASK MANAGEMENT FLOW
+================================================================================
+- Kanban Columns: Three fixed status categories: `todo`, `in_progress`, `done`.
+- Task Attributes:
+  - `title`: Short string title (required, non-empty).
+  - `description`: Optional text description.
+  - `due_date`: Optional ISO datetime string.
+  - `priority`: Choice field (`low`, `medium`, `high`). Default: `medium`.
+  - `status`: Choice field (`todo`, `in_progress`, `done`). Default: `todo`.
+  - `project`: Foreign key to `Project` (on_delete=CASCADE).
+  - `assigned_to`: Foreign key to `User` (on_delete=SET_NULL, optional).
+  - `created_by`: Foreign key to `User` (on_delete=SET_NULL, optional).
+- Business Rules:
+  - Task Creation: Restricted to Project `Admin`. Assignee must be a confirmed member of the project.
+  - Task View: Admins see all tasks in project; Members see only tasks assigned to them (`assigned_to_id == current_user.id`).
+  - Task Editing: Admins can update all fields (title, description, due date, priority, status, assignee). Assignees (Members) can ONLY update `status`. If a Member attempts to update non-status fields, backend raises HTTP 403 Forbidden ("Members can only update task status").
+  - Task Deletion: Restricted strictly to Project `Admin`.
+
+================================================================================
+12. PROJECT / WORKSPACE FLOW
+================================================================================
+- Creation: Any authenticated user can create a project. Creator is automatically assigned as Project `Admin` in `project_members`.
+- Member Roster: Each project maintains a roster in `project_members` linking `Project` and `User` with a `role` (`admin` or `member`).
+- Member Addition: Admin submits target user's `email` and desired `role`. Backend checks if target user exists and ensures they aren't already a member before creating `ProjectMember`.
+- Member Removal: Admin can remove members. Admin cannot remove themselves from the project (HTTP 400).
+- Deletion: Admin can delete a project. Deleting a project triggers cascading deletion (`on_delete=CASCADE`) of all associated `ProjectMember` and `Task` records.
+
+================================================================================
+13. REAL-TIME COMMUNICATION
+================================================================================
+Status: NOT IMPLEMENTED IN CURRENT CODEBASE.
+- TaskFlow currently operates strictly via standard HTTP REST API endpoints and polling/on-demand refetching.
+- WebSockets, Socket.IO, or Server-Sent Events (SSE) are NOT used in the codebase.
+- Reason: RESTful request-response architecture provides simple, deterministic state synchronization without maintaining persistent TCP socket connections or scaling socket state across multiple server instances.
+
+================================================================================
+14. API / SERVER FLOW
+================================================================================
+End-to-End Request Pipeline:
+
+Client HTTP Request
+  │ (e.g. PUT /api/tasks/10 with JSON body)
+  ▼
+Nginx Reverse Proxy / Web Server
+  │ (Forwards request to Gunicorn WSGI on port 8000)
+  ▼
+Django Middleware Stack
+  │ (CorsMiddleware → SecurityMiddleware → SessionMiddleware → CommonMiddleware)
+  ▼
+Django URL Routing System (taskflow_backend/urls.py → api/urls.py)
+  │ (Matches pattern 'tasks/<int:task_id>' → TaskDetailView.as_view())
+  ▼
+DRF APIView Handler
+  │ (Executes APIView dispatch loop)
+  ▼
+Custom JWTAuthentication Backend (api/authentication.py)
+  │ Reads 'Authorization: Bearer <token>'
+  │ Decodes HS256 payload & verifies user ID
+  │ Sets request.user = User instance
+  ▼
+TaskDetailView.put() Method
+  │ Checks task existence → task = Task.objects.filter(id=task_id).first()
+  │ Validates membership → get_member_or_404(task.project_id, user.id)
+  │ Validates RBAC permissions → Admin vs Assignee status check
+  │ Deserializes & validates input payload via TaskUpdateSerializer
+  │ Updates task model instance attributes & calls task.save()
+  ▼
+JSON Response Serializer
+  │ Serializes updated Task model via TaskSerializer
+  ▼
+HTTP Response Sent to Client (200 OK + JSON body)
+
+================================================================================
+15. DATABASE SCHEMA
+================================================================================
+Database Table Schemas (Django ORM):
+
+1. `users` Table (Model: User)
+   - `id`: BigAutoField (Primary Key, Auto-increment)
+   - `name`: CharField(max_length=100)
+   - `email`: EmailField(max_length=255, unique=True, db_index=True)
+   - `hashed_password`: CharField(max_length=255)
+   - `created_at`: DateTimeField(auto_now_add=True)
+
+2. `projects` Table (Model: Project)
+   - `id`: BigAutoField (Primary Key, Auto-increment)
+   - `name`: CharField(max_length=200)
+   - `description`: TextField(null=True, blank=True)
+   - `created_by_id`: ForeignKey to `users(id)` (on_delete=SET_NULL, null=True)
+   - `created_at`: DateTimeField(auto_now_add=True)
+
+3. `project_members` Table (Model: ProjectMember)
+   - `id`: BigAutoField (Primary Key, Auto-increment)
+   - `project_id`: ForeignKey to `projects(id)` (on_delete=CASCADE)
+   - `user_id`: ForeignKey to `users(id)` (on_delete=CASCADE)
+   - `role`: CharField(max_length=20, choices=['admin', 'member'], default='member')
+   - `joined_at`: DateTimeField(auto_now_add=True)
+   - Constraint: UniqueTogether('project', 'user')
+
+4. `tasks` Table (Model: Task)
+   - `id`: BigAutoField (Primary Key, Auto-increment)
+   - `title`: CharField(max_length=200)
+   - `description`: TextField(null=True, blank=True)
+   - `due_date`: DateTimeField(null=True, blank=True)
+   - `priority`: CharField(max_length=20, choices=['low', 'medium', 'high'], default='medium')
+   - `status`: CharField(max_length=20, choices=['todo', 'in_progress', 'done'], default='todo')
+   - `project_id`: ForeignKey to `projects(id)` (on_delete=CASCADE)
+   - `assigned_to_id`: ForeignKey to `users(id)` (on_delete=SET_NULL, null=True)
+   - `created_by_id`: ForeignKey to `users(id)` (on_delete=SET_NULL, null=True)
+   - `created_at`: DateTimeField(auto_now_add=True)
+   - `updated_at`: DateTimeField(auto_now=True)
+
+================================================================================
+16. AUTHENTICATION
+================================================================================
+- Algorithm: HS256 (HMAC with SHA-256)
+- Secret Key: Loaded from `SECRET_KEY` environment variable.
+- Token Expiry: 7 Days (60 * 24 * 7 minutes).
+- Payload Contents: `{ "sub": "<user_id>", "exp": <unix_timestamp> }`
+- Password Hashing: `passlib.context.CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")`. Passwords stored as PBKDF2/Bcrypt hashes.
+- Verification Flow: `JWTAuthentication.authenticate()` splits HTTP `Authorization` header, decodes token, converts `sub` claim to integer user ID, and retrieves `User` object. Raises DRF `AuthenticationFailed` (401) if invalid.
+
+================================================================================
+17. AUTHORIZATION / RBAC
+================================================================================
+Role Matrix:
+
+Action                              | Admin | Member
+------------------------------------+-------+--------
+Create Project                      |  YES  |  YES
+Rename / Edit Project               |  YES  |   NO
+Delete Project                      |  YES  |   NO
+Add Member to Project               |  YES  |   NO
+Remove Member from Project          |  YES  |   NO
+Create Task in Project              |  YES  |   NO
+Delete Task in Project              |  YES  |   NO
+Reassign Task                       |  YES  |   NO
+Edit Task Title / Description / Due |  YES  |   NO
+View Project Tasks                  | ALL   | ASSIGNED ONLY
+Update Task Status                  |  YES  |  YES (Assigned Tasks Only)
+
+================================================================================
+18. STATE MANAGEMENT
+================================================================================
+- Auth State (`AuthContext.tsx`): React Context exposing `user`, `token`, `isAuthenticated`, `isLoading`, `login()`, `logout()`. Stores session data in `localStorage` under `taskflow_token` and `taskflow_user`. Listens for window event `taskflow:logout` to reset auth state cleanly.
+- Theme State (`ThemeContext.tsx`): React Context exposing `theme` ('dark' | 'light') and `toggleTheme()`. Updates `data-theme` attribute on `document.documentElement` and saves to `localStorage` ('tf-theme').
+- Page Local State: Component `useState` hooks manage form modal visibility, task drag/cycle states, search query strings, active tabs, and API fetching state (`loading`, `error`).
+
+================================================================================
+19. IMPORTANT FILES AND FUNCTIONS
+================================================================================
+Core Backend Files:
+1. `backend/api/authentication.py`:
+   - `JWTAuthentication.authenticate(request)`: Main DRF auth entrypoint validating HTTP Bearer tokens.
+   - `create_access_token(data, expires_delta)`: Utility generating signed JWT tokens.
+   - `hash_password(password)` & `verify_password(plain, hashed)`: PassLib password hash helpers.
+2. `backend/api/models.py`:
+   - Defines ORM classes `User`, `Project`, `ProjectMember`, `Task` and choice enums `RoleChoices`, `PriorityChoices`, `StatusChoices`.
+3. `backend/api/serializers.py`:
+   - `UserSerializer`, `UserCreateSerializer`, `UserLoginSerializer`: Auth serializers with custom non-empty validations.
+   - `ProjectSerializer`, `TaskSerializer`, `DashboardSerializer`: Nested response models.
+4. `backend/api/views.py`:
+   - `SignupView`, `LoginView`, `MeView`: Public and user auth views.
+   - `ProjectListCreateView`, `ProjectDetailView`: Handles project CRUD and admin restrictions.
+   - `TaskListCreateView`, `TaskDetailView`: Manages task CRUD and status update restrictions for members.
+   - `DashboardView`: Aggregates metrics (overdue count, tasks by status, per-user task distribution).
+
+Core Frontend Files:
+1. `frontend/src/api.ts`:
+   - Axios instance configured with `baseURL = '/api'`.
+   - Interceptors: Attaches JWT Bearer token; handles 401 response by dispatching `taskflow:logout`.
+2. `frontend/src/AuthContext.tsx`:
+   - Implements session restoration from `localStorage` on load and handles soft logout via event listener.
+3. `frontend/src/App.tsx`:
+   - Routes tree definition, setting up `PublicRoute` and `PrivateRoute` with a `SplashScreen` loading UI.
+4. `frontend/src/pages/Dashboard.tsx`:
+   - Fetches metrics and project task arrays; renders Recharts visualizations and overdue task triage table.
+5. `frontend/src/pages/ProjectDetailPage.tsx`:
+   - Implements 3-column Kanban board, status cycling, task creation modal, member roster, and project settings.
+
+================================================================================
+20. FEATURE-BY-FEATURE INTERNAL WORKING
+================================================================================
+1. User Signup & Login:
+   - User submits email/password on `AuthPage`.
+   - POST to `/api/auth/login` calls `LoginView.post()`.
+   - `UserLoginSerializer` checks fields. `User.objects.filter(email=email).first()` fetches user.
+   - `verify_password()` checks password hash.
+   - `create_access_token()` builds JWT. Response returns 200 with `{ "access_token": token, "token_type": "bearer", "user": ... }`.
+   - Frontend stores token & user in `localStorage` and updates `AuthContext`.
+
+2. Project Creation & Member Promotion:
+   - User submits project name & description on `ProjectsPage`.
+   - POST to `/api/projects` calls `ProjectListCreateView.post()`.
+   - Backend creates `Project(name=..., created_by=current_user)`.
+   - Backend immediately creates `ProjectMember(project=project, user=current_user, role='admin')`.
+   - Serializer returns 201 Created with full project details.
+
+3. Task Creation (Admin Restricted):
+   - Admin submits task modal on `ProjectDetailPage`.
+   - POST to `/api/tasks/projects/:id/tasks` calls `TaskListCreateView.post()`.
+   - `get_member_or_404()` verifies user membership.
+   - Checks `membership.role == 'admin'`. If not admin, raises HTTP 403 Forbidden.
+   - If assignee provided, checks `ProjectMember.objects.filter(project_id=id, user_id=assignee).exists()`.
+   - Creates `Task` record and returns 201 Created.
+
+4. Task Status Cycle (Member Permitted):
+   - User clicks status badge on task card.
+   - PUT to `/api/tasks/:id` with body `{"status": "in_progress"}` calls `TaskDetailView.put()`.
+   - Checks if user is admin OR assigned user (`task.assigned_to_id == current_user.id`).
+   - If member tries to change title or due date, raises HTTP 403 ("Members can only update task status").
+   - Updates `task.status = 'in_progress'`, saves, and returns updated task.
+
+5. Executive Dashboard Triage:
+   - GET to `/api/dashboard` calls `DashboardView.get()`.
+   - Fetches all projects current user belongs to via `ProjectMember.objects.filter(user=current_user)`.
+   - Queries `Task.objects.filter(project_id__in=project_ids)`.
+   - Evaluates overdue condition (`due_date < now` and `status != 'done'`).
+   - Aggregates status breakdown and user task allocation maps.
+   - Returns serialized `DashboardSerializer` JSON.
+
+================================================================================
+21. ERROR HANDLING
+================================================================================
+- Backend Exception Handling:
+  - Custom exception `CustomHTTPException(APIException)` converts explicit error status codes and detail strings into standard DRF JSON responses: `{ "detail": "error message" }`.
+  - Input validation errors in serializers are caught and returned as HTTP 400 Bad Request with descriptive field error messages.
+- Frontend Error Handling:
+  - Axios response interceptor catches HTTP 401. If route is not login/signup, dispatches `taskflow:logout` custom event.
+  - `AuthContext` catches `taskflow:logout` and clears state, triggering `PrivateRoute` to navigate to `/login` without forcing a full page browser reload.
+  - Toast notifications (`react-hot-toast`) display error alerts on failed API requests.
+
+================================================================================
+22. SECURITY ANALYSIS
+================================================================================
+Implemented Security Controls:
+1. Password Protection: PBKDF2/Bcrypt hashing via PassLib; plain text passwords are never stored.
+2. SQL Injection Defense: Parameterized ORM queries managed entirely by Django ORM.
+3. Server-Side Authorization: Permissions verified in Python code on every API request.
+4. Token Validation: Expiry and signature verified per request; invalid tokens rejected.
+
+Security Improvements Needed for Production:
+1. Move JWT storage from browser `localStorage` to `HttpOnly` Secure Cookies to prevent Cross-Site Scripting (XSS) token theft.
+2. Implement Refresh Token rotation mechanism.
+3. Enforce rate limiting on authentication routes (`POST /api/auth/login`) using Django REST Framework throttling (`ScopedRateThrottle`).
+4. Set strict Content Security Policy (CSP) and HSTS headers in Nginx configuration.
+
+================================================================================
+23. PERFORMANCE ANALYSIS
+================================================================================
+- Database Optimization: `email` column on `users` table is defined with `db_index=True` for O(1) index lookups during login.
+- Project Scoping: `ProjectMember` queries use filtered relational indexing to prevent full table scans.
+- Static Asset Serving: Production React build is compiled into static assets served directly via Nginx.
+- Benchmark Statement: No formal benchmark or load test metric data exists within the repository.
+
+================================================================================
+24. SCALABILITY
+================================================================================
+Current System Architecture:
+- Single-instance Gunicorn web server running Django backend connected to PostgreSQL / SQLite database.
+
+Scaling Strategy for Growth:
+1. Horizontal API Scaling: Because JWT authentication is completely stateless, multiple Gunicorn backend instances can run behind an Nginx or AWS Application Load Balancer (ALB).
+2. Database Read Replicas: Separate read/write database connections in Django settings to offload dashboard analytical read queries (`/api/dashboard`) to PostgreSQL read replicas.
+3. Caching Layer: Introduce Redis to cache user project memberships and dashboard aggregation data.
+4. Background Task Queue: Integrate Celery with Redis/RabbitMQ to handle background asynchronous tasks (e.g. email notifications or scheduled overdue task checks).
+
+================================================================================
+25. ENGINEERING DECISIONS
+================================================================================
+1. Framework: Django & Django REST Framework
+   - Why: Python's Django ORM provides built-in migration management, schema validation, and SQL injection security out of the box.
+2. Architecture: Single Page Application (React 19) + Decoupled REST API
+   - Why: Clean separation of frontend UI concerns from backend business logic allows independent deployment and scaling.
+3. Authentication: Custom JWT authentication
+   - Why: Eliminates server-side session state, enabling stateless backend scaling across server nodes.
+4. Authorization: Server-Side RBAC
+   - Why: Client-side UI hiding is insecure; enforcing permissions in DRF views guarantees data integrity.
+
+================================================================================
+26. HARDEST TECHNICAL PROBLEMS
+================================================================================
+Problem 1: Server-Side RBAC Data Isolation
+- Challenge: Ensuring project members cannot view tasks assigned to other members or manipulate tasks outside their role, without duplicating permissions logic across every view.
+- Solution: Centralized helper functions (`get_member_or_404`, `require_admin`) in `api/views.py` and filtered task querysets (`tasks.filter(assigned_to=current_user)`) based on role.
+
+Problem 2: Single-Page Session Invalidation
+- Challenge: When a JWT expires or becomes invalid, standard hard redirects (`window.location.href`) wipe React state and cause jarring screen flashes.
+- Solution: Configured Axios response interceptor to dispatch a custom window event (`taskflow:logout`). `AuthContext` listens for this event and updates React state gracefully, letting `PrivateRoute` handle screen transitions smoothly.
+
+================================================================================
+27. PRODUCTION IMPROVEMENTS
+================================================================================
+1. Implement Redis caching for dashboard metrics.
+2. Transition JWT storage to HttpOnly secure cookies.
+3. Integrate Celery for asynchronous background processing and email delivery.
+4. Implement WebSocket support using Django Channels for instant real-time Kanban board updates.
+5. Add automated unit and integration test suites using pytest-django and React Testing Library.
+
+================================================================================
+28. INTERVIEW QUESTIONS & ACCURATE ANSWERS
+================================================================================
+Basic Questions:
+Q1: What is TaskFlow?
+A: TaskFlow is a team task management platform built with React 19, TypeScript, and Django REST Framework. It provides multi-tenant project isolation, dynamic Kanban workflow boards, executive dashboard analytics, and server-enforced Role-Based Access Control (RBAC).
+
+Q2: How does authentication work in TaskFlow?
+A: Authentication is stateless via JWT tokens. When a user logs in (`POST /api/auth/login`), the backend verifies their password hash (using passlib PBKDF2/Bcrypt) and returns a signed HS256 JWT access token with a 7-day expiration. The token is attached to subsequent API requests via the `Authorization: Bearer <token>` header and validated by custom Django `JWTAuthentication` middleware.
+
+Intermediate Questions:
+Q3: How is Role-Based Access Control (RBAC) enforced?
+A: RBAC is enforced strictly at the Django API view layer in Python. When a request hits an endpoint (e.g., creating a task or adding a member), helper functions verify the user's role in `project_members`. If a non-admin user attempts an admin action, the view raises a `CustomHTTPException(403, "Only project admins can perform this action")`. Additionally, task list queries filter tasks by assignee for non-admin members.
+
+Q4: What database models exist and how are they related?
+A: Four main Django ORM models exist: `User` (name, email, hashed_password), `Project` (name, description, created_by FK User), `ProjectMember` (project FK Project, user FK User, role choice ['admin', 'member']), and `Task` (title, description, status, priority, due_date, project FK Project, assigned_to FK User, created_by FK User).
+
+Advanced Questions:
+Q5: Is real-time communication (WebSockets) implemented in TaskFlow?
+A: No, real-time WebSockets or Socket.IO are NOT implemented in the current codebase. TaskFlow relies strictly on standard RESTful HTTP request-response patterns and client-side refetching.
+
+Q6: How would you scale TaskFlow to handle 100,000 active users?
+A: Since JWT authentication is stateless, I would deploy multiple Django Gunicorn API nodes behind an AWS Application Load Balancer. I would implement PostgreSQL read replicas for heavy dashboard queries, introduce Redis to cache project membership states, and add Celery workers for background job execution.
+
+================================================================================
+29. ADVANCED FOLLOW-UP QUESTIONS & TECHNICAL ANSWERS
+================================================================================
+Q: How do you prevent race conditions when two users update a task status simultaneously?
+A: In the current implementation, standard last-write-wins ORM updates apply. In production, I would implement pessimistic locking (`Task.objects.select_for_update()`) inside an atomic transaction (`@transaction.atomic`), or use optimistic concurrency control by adding a `version` field to the `Task` model.
+
+Q: What happens if a user's token expires while they are filling out a form?
+A: The Axios response interceptor catches the resulting HTTP 401 response and dispatches the `taskflow:logout` custom event. `AuthContext` clears the token from `localStorage` and sets `user` to `null`. `PrivateRoute` detects `isAuthenticated = false` and smoothly redirects the user to `/login`.
+
+================================================================================
+30. CLAIMS NOT SUPPORTED BY CODEBASE (DO NOT MAKE IN INTERVIEWS)
+================================================================================
+- DO NOT claim WebSockets, Socket.IO, or real-time instant board updates exist in code (REST API only).
+- DO NOT claim email notifications or AWS S3 file upload features are implemented (Not present).
+- DO NOT claim microservices architecture (It is a 2-tier client-server SPA + Django REST API architecture).
+- DO NOT claim formal performance benchmarks like "100ms latency" or "10,000 requests/sec" (No load tests exist in repo).
+
+================================================================================
+31. RESUME-WORTHY TECHNICAL POINTS
+================================================================================
+- Engineered a full-stack team management platform using React 19, TypeScript, and Django REST Framework.
+- Implemented stateless JWT authentication and custom Django `JWTAuthentication` middleware with 7-day token expiration and PBKDF2 password hashing.
+- Developed server-enforced Role-Based Access Control (RBAC) in DRF views, isolating project workspaces and scoping task access by user role.
+- Designed a custom CSS variable design system supporting dynamic Light/Dark theme switching and responsive mobile drawer layouts.
+- Built executive dashboard analytics utilizing Recharts for status distribution visualization and workload allocation tracking.
+- Fully containerized application with Docker and Gunicorn WSGI for production cloud deployment.
+
+================================================================================
+32. FINAL PROJECT SUMMARY
+================================================================================
+TaskFlow is a robust, production-grade full-stack task management application featuring a React 19 TypeScript frontend and a Django REST Framework backend. It demonstrates real-world software engineering principles including stateless JWT authentication, server-enforced RBAC authorization, relational ORM database design, responsive UI/UX theme engines, and Docker containerization.
+================================================================================

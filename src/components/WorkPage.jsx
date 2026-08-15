@@ -9,7 +9,7 @@ import './WorkPage.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function WorkPage() {
+export default function WorkPage({ scrollerRef, embedded = false }) {
   const navigate = useNavigate()
   const [selectedProject, setSelectedProject] = useState(null)
   const [navOpen, setNavOpen] = useState(false)
@@ -18,72 +18,86 @@ export default function WorkPage() {
   const pinRef = useRef(null)
 
   useLayoutEffect(() => {
-    const scrollerEl = containerRef.current
     const horizontalTrack = horizontalRef.current
     const pinSection = pinRef.current
 
-    if (!scrollerEl || !horizontalTrack || !pinSection) return
+    if (!horizontalTrack || !pinSection) return
 
-    // Initialize Lenis on scroller container (.work-page)
-    const lenis = new Lenis({
-      wrapper: scrollerEl,
-      content: scrollerEl.firstElementChild || scrollerEl,
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    })
+    let lenis = null
+    let tickerCb = null
 
-    lenis.on('scroll', () => {
-      ScrollTrigger.update()
-    })
+    // Initialize Lenis only if standalone (not embedded)
+    if (!embedded) {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      })
 
-    const tickerCb = (time) => {
-      lenis.raf(time * 1000)
+      lenis.on('scroll', () => {
+        ScrollTrigger.update()
+      })
+
+      tickerCb = (time) => {
+        lenis.raf(time * 1000)
+      }
+      gsap.ticker.add(tickerCb)
+      gsap.ticker.lagSmoothing(0)
     }
-    gsap.ticker.add(tickerCb)
-    gsap.ticker.lagSmoothing(0)
 
     // GSAP Horizontal Scroll animation pinned inside scrollerEl
     const ctx = gsap.context(() => {
       const getDistanceToScroll = () => {
-        const totalScrollWidth = horizontalTrack.scrollWidth
-        const visibleWidth = scrollerEl.clientWidth
-        return Math.max(0, totalScrollWidth - visibleWidth + 120)
+        const trackWidth = horizontalTrack.scrollWidth
+        const viewportWidth = horizontalTrack.parentElement.clientWidth
+        return Math.max(0, trackWidth - viewportWidth)
       }
 
       gsap.to(horizontalTrack, {
         x: () => -getDistanceToScroll(),
-        ease: 'none',
+        ease: "none",
+
         scrollTrigger: {
           trigger: pinSection,
-          scroller: scrollerEl,
-          start: 'top top',
-          end: () => '+=' + (getDistanceToScroll() + 300),
+          ...(embedded && scrollerRef?.current ? { scroller: scrollerRef.current } : {}),
+          start: "top top",
+          end: () => `+=${getDistanceToScroll()}`,
           pin: true,
-          scrub: 1,
+          pinSpacing: true,
+          scrub: 0.5,
           invalidateOnRefresh: true,
         },
-      })
+      });
     }, containerRef)
 
-    const timer = setTimeout(() => {
+    const handleRefresh = () => {
       ScrollTrigger.refresh()
-    }, 400)
+    }
+
+    const timer1 = setTimeout(handleRefresh, 300)
+    const timer2 = setTimeout(handleRefresh, 1000)
+    window.addEventListener('load', handleRefresh)
+    window.addEventListener('resize', handleRefresh)
 
     return () => {
-      clearTimeout(timer)
-      gsap.ticker.remove(tickerCb)
-      lenis.destroy()
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+      window.removeEventListener('load', handleRefresh)
+      window.removeEventListener('resize', handleRefresh)
+      if (tickerCb) gsap.ticker.remove(tickerCb)
+      if (lenis) lenis.destroy()
       ctx.revert()
     }
-  }, [])
-
-
+  }, [scrollerRef, embedded])
 
   return (
-    <div className="work-page" ref={containerRef}>
-      <SiteHeader onOpen={() => setNavOpen(true)} />
-      <NavPanel isOpen={navOpen} onClose={() => setNavOpen(false)} />
+    <div className={embedded ? 'work-section-card' : 'work-page'} ref={containerRef} id="work-section">
+      {!embedded && (
+        <>
+          <SiteHeader onOpen={() => setNavOpen(true)} />
+          <NavPanel isOpen={navOpen} onClose={() => setNavOpen(false)} />
+        </>
+      )}
 
       <section className="intro">
         <div className="work-header">
@@ -122,14 +136,20 @@ export default function WorkPage() {
                       </div>
 
                       <div className="project-wireframe-buttons-col">
-                        <a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="wireframe-btn"
-                        >
-                          Live
-                        </a>
+                        {project.demo && project.demo !== '#' ? (
+                          <a
+                            href={project.demo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="wireframe-btn"
+                          >
+                            Live
+                          </a>
+                        ) : (
+                          <span className="wireframe-btn" style={{ opacity: 0.65, cursor: 'default' }}>
+                            Soon Live
+                          </span>
+                        )}
                         <a
                           href={project.github}
                           target="_blank"

@@ -133,36 +133,37 @@ export const projects = [
     category: 'Peer-to-Peer Digital Wallet & Payment Platform',
     image: nexoraImg,
     summary:
-      'Architected and developed a secure peer-to-peer digital wallet platform enabling virtual credit transfers, QR-based payments, and persistent transaction history.',
-    tags: ['Node.js', 'Express.js', 'MongoDB', 'React Native', 'JWT', 'Docker', 'Swagger', 'Bcrypt'],
+      'Full-stack campus event discovery and hosting platform built with Next.js 14 (App Router), Mapbox GL 3D mapping, UploadThing cloud storage, Stripe checkout, and Svix-verified Clerk authentication.',
+    tags: ['Next.js 14', 'TypeScript', 'MongoDB', 'Mapbox GL 3D', 'Clerk Auth', 'Stripe API', 'UploadThing', 'Tailwind CSS'],
     bullets: [
-      'Architected and developed a secure peer-to-peer digital wallet platform enabling virtual credit transfers using Node.js, Express.js, MongoDB, and React Native.',
-      'Implemented JWT authentication, role-based access control (RBAC), QR-based payments, and persistent transaction history.',
-      'Engineered 15+ RESTful APIs for authentication, wallet management, and transaction processing using modular MVC architecture with centralized middleware, request validation, bcrypt hashing, and Swagger documentation.'
+      'Architected full-stack campus event discovery platform using Next.js 14 App Router, Server Actions, TypeScript, MongoDB, and Tailwind CSS.',
+      'Engineered interactive 3D Mapbox GL mapping engine featuring live device GPS geolocation, Haversine radius filtering, and Mapbox Directions routing.',
+      'Integrated automated event publishing pipeline with Mapbox Geocoding, UploadThing cloud storage, Clerk Svix webhooks, and Stripe ticket checkout sessions.'
     ],
     github: 'https://github.com/Zeny1303/NexoraV2',
     demo: 'https://nexora-v2-taupe.vercel.app/',
     details: {
-      tagline: 'Secure, high-concurrency P2P fintech wallet with atomic credit transfers and Swagger API documentation.',
+      tagline: 'Full-Stack Campus Event Discovery & Hosting Platform with 3D Mapbox Geospatial Navigation & Stripe Checkout.',
       overview:
         'Nexora is a financial technology system designed for seamless peer-to-peer credit transfers, merchant QR scanning, and transparent audit logging. Built with Node.js, Express, MongoDB, and React Native, it features bank-grade input validation, password hashing, and transaction safety.',
       architecture: [
-        'Node.js & Express.js modular MVC architecture with strict middleware pipelines for authentication & rate limiting.',
-        'MongoDB transactional balance updates ensuring zero race conditions during credit transfers.',
-        'Bcrypt hashing, JWT bearer tokens, and request schema validation across 15+ API endpoints.',
-        'Interactive OpenAPI / Swagger documentation for developers and API clients.'
+        'Next.js 14 App Router architecture combining React Server Components (RSC) for feed rendering and Client Components for interactive 3D maps & forms.',
+        'Interactive Mapbox GL 3D aerial map with dark-v11 terrain style, browser GPS geolocation, Haversine formula distance calculation, and Mapbox Directions API routing.',
+        'Automated event publishing pipeline using React Hook Form + Zod validation, UploadThing poster hosting, and server-side Mapbox Geocoding API address conversion.',
+        'Asynchronous webhook architecture verifying Clerk user identity updates via Svix signatures and Stripe payment fulfillment via Stripe Webhook signatures.'
       ],
       keyFeatures: [
-        'Atomic P2P Transfers: Instant credit transfer between users with real-time balance updates and ledger entries.',
-        'QR Code Scanner & Payments: Mobile-ready QR payload parsing for merchant and peer transactions.',
-        'Comprehensive Transaction History: Searchable, paginated audit log of incoming and outgoing payments.',
-        'Swagger API Docs: Interactive documentation interface built using OpenAPI specifications.'
+        '3D Geospatial Map & Turn-by-Turn Routing: Dark-v11 Mapbox 3D map with live GPS geolocation, dynamic radius filtering slider, and turn-by-turn driving directions.',
+        'Automated Address Geocoding & Poster Cloud Storage: Instant transformation of human-readable venue addresses into lat/lng coordinates and UploadThing 4MB poster uploads.',
+        'Search & Category Discovery Engine: Real-time keyword search across titles, descriptions, and venue locations paired with dynamic category pills.',
+        'Stripe Ticket Checkout & Order Tracking: USD Stripe Checkout Sessions with Svix & Stripe webhook fulfillment and user profile ticket history.',
+        'Organizer Dashboard & Attendee Analytics: MongoDB aggregation pipeline displaying real-time ticket sales and buyer contact details per event.'
       ],
       metrics: [
-        { label: 'REST APIs', value: '15+ Endpoints' },
-        { label: 'Security', value: 'Bcrypt + JWT' },
-        { label: 'Database', value: 'MongoDB' },
-        { label: 'Docs', value: 'Swagger OpenAPI' }
+        { label: '3D Mapping Engine', value: 'Mapbox GL v3.2' },
+        { label: 'Geocoding Speed', value: '< 200ms' },
+        { label: 'Authentication', value: 'Clerk + Svix Webhooks' },
+        { label: 'Payments', value: 'Stripe API' }
       ]
     }
   }

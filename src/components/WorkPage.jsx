@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
+import { SiLeetcode, SiGithub } from 'react-icons/si'
 import { projects } from '../data/projectsData'
 import { SiteHeader, NavPanel } from './Navbar'
 import './WorkPage.css'
@@ -52,6 +53,10 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
         const viewportWidth = horizontalTrack.parentElement.clientWidth
         return Math.max(0, trackWidth - viewportWidth)
       }
+
+      const targetScroller = embedded
+        ? (scrollerRef?.current || document.querySelector('.home-about-container') || window)
+        : window
 
       gsap.to(horizontalTrack, {
         x: () => -getDistanceToScroll(),
@@ -200,7 +205,7 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
       {/* =========================================================
           CODING & GITHUB STATS SECTION (AFTER PROJECTS SCROLL)
       ========================================================= */}
-      <section className="coding-stats-section">
+      <section className="coding-stats-section" id="coding-stats">
         <div className="coding-stats-header">
           <span className="coding-tag">Problem Solving & Open Source</span>
           <h2 className="coding-title">DSA & GitHub Contributions</h2>
@@ -212,7 +217,9 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
           <div className="coding-card leetcode-card">
             <div className="coding-card-top">
               <div className="coding-card-title">
-                <span className="coding-icon leetcode-icon">⚡</span>
+                <span className="coding-icon leetcode-icon">
+                  <SiLeetcode size={26} color="#FFA116" />
+                </span>
                 <div>
                   <h3>LeetCode</h3>
                   <span className="coding-handle">@Sneha09 (Zeny1303)</span>
@@ -286,7 +293,9 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
           <div className="coding-card github-card">
             <div className="coding-card-top">
               <div className="coding-card-title">
-                <span className="coding-icon github-icon">🐙</span>
+                <span className="coding-icon github-icon">
+                  <SiGithub size={26} color="#5E3023" />
+                </span>
                 <div>
                   <h3>GitHub</h3>
                   <span className="coding-handle">@Zeny1303</span>
@@ -425,7 +434,7 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
         </div>
       )}
 
-      
+
     </div>
   )
 }

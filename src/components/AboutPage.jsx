@@ -6,6 +6,7 @@ import { NavPanel, SiteHeader } from './Navbar'
 import WorkPage from './WorkPage'
 import ContactBoard from './contactBoard/ContactBoard'
 import TechnologySection from './TechnologySection'
+import { usePortfolioNavigation } from '../hooks/usePortfolioNavigation'
 import heroImage from '../assests/HeroImage.png'
 import bkBg from '../assests/bk.png'
 import cloudsImg from '../assests/cloudss.png'
@@ -22,6 +23,7 @@ export default function AboutPage() {
   const cloudLayerRef = useRef(null)
   const mainRef = useRef(null)
   const [navOpen, setNavOpen] = useState(false)
+  const { navigateTo } = usePortfolioNavigation({ stageRef: mainRef, containerRef })
 
   const tilt = (xPercent, rotation) => {
     if (mainRef.current) {
@@ -154,19 +156,7 @@ export default function AboutPage() {
           tilt(0, 0)
         }}
         onLinkClick={(label) => {
-          const navLinks = [...document.querySelectorAll('[data-nav-label]')]
-          gsap.killTweensOf(navLinks)
-          gsap.to(navLinks.filter((el) => el.dataset.navLabel !== label), {
-            opacity: 0,
-            x: 30,
-            duration: 0.2,
-            ease: 'power2.in',
-            stagger: 0.04,
-          })
-          gsap.delayedCall(0.25, () => {
-            setNavOpen(false)
-            handleNavLink(label)
-          })
+          navigateTo(label, { onCloseMenu: () => setNavOpen(false) })
         }}
       />
 
@@ -174,7 +164,7 @@ export default function AboutPage() {
         <div ref={mainRef} style={{ width: '100%', position: 'relative' }}>
           <SiteHeader
             activePage="About"
-            onNavigate={(path) => navigate(path)}
+            onNavigate={(path, label) => navigateTo(label || path)}
             onOpen={() => {
               setNavOpen(true)
               tilt(-50, 12)
@@ -184,7 +174,7 @@ export default function AboutPage() {
           {/* ═══════════════════════════════════════════
               1. HERO SECTION
           ═══════════════════════════════════════════ */}
-          <section className="hh-hero">
+          <section className="hh-hero" id="hero">
 
             {/* ── Inner grid wrapper ── */}
             <div className="hh-grid">
@@ -342,7 +332,7 @@ export default function AboutPage() {
           {/* ═══════════════════════════════════════════
               2. ABOUT SECTION CARD (SLIDES UP OVER HERO SECTION)
           ═══════════════════════════════════════════ */}
-          <section className="about-section-card" ref={aboutCardRef} style={{ backgroundImage: `url(${bkBg})` }}>
+          <section className="about-section-card" id="about" ref={aboutCardRef} style={{ backgroundImage: `url(${bkBg})` }}>
             {/* Decorative transparent cloud layer.
                 The PNG already has transparency, so it floats directly over the blue
                 background. z-index keeps it behind the Journey heading and timeline. */}

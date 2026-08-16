@@ -263,6 +263,23 @@ export default function ContactForm() {
     return null;
   };
 
+  // Helper to convert Blob to Base64 string for Google Apps Script
+  const blobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          const parts = reader.result.split(",");
+          resolve(parts[1] || "");
+        } else {
+          resolve("");
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
   const handleSend = async (e) => {
     if (e) e.preventDefault();
 
@@ -276,20 +293,72 @@ export default function ContactForm() {
       return;
     }
 
+    const googleAppScriptUrl = import.meta.env.VITE_GOOGLE_SHEET_WEB_APP_URL || "";
     const apiUrl = import.meta.env.VITE_API_URL || "";
 
-    // VOICE SUBMISSION PATH (when audioBlob exists)
-    if (audioBlob) {
-      // Frontend 5 MB validation check
-      const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
-      if (audioBlob.size > MAX_SIZE) {
+    // Check 5 MB limit if voice recording is present
+    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+    if (audioBlob && audioBlob.size > MAX_SIZE) {
+      setStatus("ERROR");
+      setFeedbackMsg("Voice recording is too large.");
+      return;
+    }
+
+    setStatus("SENDING");
+
+    // ── PATH A: GOOGLE APPS SCRIPT WEB APP ──
+    if (googleAppScriptUrl) {
+      try {
+        let voiceBase64 = "";
+        if (audioBlob) {
+          voiceBase64 = await blobToBase64(audioBlob);
+        }
+
+        const ext = getExtensionFromMimeType(mimeType || (audioBlob && audioBlob.type));
+        const payload = {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+          voiceBase64: voiceBase64,
+          voiceMimeType: mimeType || (audioBlob && audioBlob.type) || "audio/webm",
+          voiceFilename: `voice-message-${Date.now()}.${ext}`,
+          submissionType: (audioBlob && formData.message.trim())
+            ? "voice+text"
+            : (audioBlob ? "voice" : "text"),
+          honeypot: ""
+        };
+
+        const response = await fetch(googleAppScriptUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (data && data.success) {
+          setStatus("SUCCESS");
+          setShowSuccessModal(true);
+          setFormData({ name: "", email: "", message: "" });
+          if (audioBlob) deleteRecording();
+        } else {
+          setStatus("ERROR");
+          setFeedbackMsg(
+            (data && data.message) || "Unable to send your message right now. Please try again."
+          );
+        }
+      } catch (err) {
+        console.error("[Google Apps Script Submission Error]:", err);
         setStatus("ERROR");
-        setFeedbackMsg("Voice recording is too large.");
-        return;
+        setFeedbackMsg("Unable to send your message right now. Please try again.");
       }
+      return;
+    }
 
-      setStatus("SENDING");
-
+    // ── PATH B: EXISTING NODE.JS BACKEND FALLBACK ──
+    if (audioBlob) {
       const payloadMessage =
         formData.message.trim() || `[Voice Note Recorded — ${formatTime(recordingTime)}]`;
 
@@ -312,7 +381,7 @@ export default function ContactForm() {
           setStatus("SUCCESS");
           setShowSuccessModal(true);
           setFormData({ name: "", email: "", message: "" });
-          deleteRecording(); // Clear recording and return to TEXT mode on success
+          deleteRecording();
         } else {
           setStatus("ERROR");
           let errMessage = "Unable to send the voice message right now. Please try again.";
@@ -322,19 +391,14 @@ export default function ContactForm() {
             errMessage = data.message;
           }
           setFeedbackMsg(errMessage);
-          // Audio recording remains available for retry
         }
       } catch (err) {
         console.error("[Voice Upload Network/Server Error]:", err);
         setStatus("ERROR");
         setFeedbackMsg("Unable to send the voice message right now. Please try again.");
-        // Audio recording remains available for retry
       }
       return;
     }
-
-    // TEXT-ONLY SUBMISSION PATH (when no audioBlob exists)
-    setStatus("SENDING");
 
     try {
       const response = await fetch(`${apiUrl}/api/contact`, {

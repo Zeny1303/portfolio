@@ -46,17 +46,23 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
       gsap.ticker.lagSmoothing(0)
     }
 
+    // Determine the scroll container element reliably
+    const getScroller = () => {
+      if (embedded) {
+        return scrollerRef?.current || document.querySelector('.home-about-container') || window
+      }
+      return window
+    }
+
     // GSAP Horizontal Scroll animation pinned inside scrollerEl
     const ctx = gsap.context(() => {
       const getDistanceToScroll = () => {
         const trackWidth = horizontalTrack.scrollWidth
-        const viewportWidth = horizontalTrack.parentElement.clientWidth
+        const viewportWidth = pinSection.clientWidth || window.innerWidth
         return Math.max(0, trackWidth - viewportWidth)
       }
 
-      const targetScroller = embedded
-        ? (scrollerRef?.current || document.querySelector('.home-about-container') || window)
-        : window
+      const scrollerEl = getScroller()
 
       gsap.to(horizontalTrack, {
         x: () => -getDistanceToScroll(),
@@ -64,7 +70,7 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
 
         scrollTrigger: {
           trigger: pinSection,
-          ...(embedded && scrollerRef?.current ? { scroller: scrollerRef.current } : {}),
+          scroller: scrollerEl,
           start: "top top",
           end: () => `+=${getDistanceToScroll()}`,
           pin: true,
@@ -72,23 +78,32 @@ export default function WorkPage({ scrollerRef, embedded = false }) {
           scrub: 0.5,
           invalidateOnRefresh: true,
         },
-      });
+      })
     }, containerRef)
+
+    // Observe size/layout changes on the track (e.g. image loads)
+    const resizeObserver = new ResizeObserver(() => {
+      ScrollTrigger.refresh()
+    })
+    resizeObserver.observe(horizontalTrack)
 
     const handleRefresh = () => {
       ScrollTrigger.refresh()
     }
 
-    const timer1 = setTimeout(handleRefresh, 300)
-    const timer2 = setTimeout(handleRefresh, 1000)
+    const timer1 = setTimeout(handleRefresh, 100)
+    const timer2 = setTimeout(handleRefresh, 400)
+    const timer3 = setTimeout(handleRefresh, 1000)
     window.addEventListener('load', handleRefresh)
     window.addEventListener('resize', handleRefresh)
 
     return () => {
       clearTimeout(timer1)
       clearTimeout(timer2)
+      clearTimeout(timer3)
       window.removeEventListener('load', handleRefresh)
       window.removeEventListener('resize', handleRefresh)
+      resizeObserver.disconnect()
       if (tickerCb) gsap.ticker.remove(tickerCb)
       if (lenis) lenis.destroy()
       ctx.revert()

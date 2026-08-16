@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaPencilAlt, FaMapMarkerAlt, FaLinkedinIn, FaGithub, FaEnvelope, FaTwitter } from "react-icons/fa";
 import { HiDocument } from "react-icons/hi";
@@ -7,6 +7,8 @@ import LedDisplay from "./LedDisplay";
 import TactileCard from "./TactileCard";
 import HardwareButton from "./HardwareButton";
 import ContactForm from "./ContactForm";
+import resumePDF from "../../assests/Sneha_Resume.pdf";
+import introAudio from "../../assests/intro.mp3";
 
 import "./ContactBoard.css";
 import "./LedDisplay.css";
@@ -39,6 +41,57 @@ const boardVariants = {
 
 export default function ContactBoard() {
   const [activeTab, setActiveTab] = useState("intro");
+  const [audioState, setAudioState] = useState("IDLE"); // IDLE | PLAYING | PAUSED
+
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    const audio = new Audio(introAudio);
+    audioRef.current = audio;
+
+    const handleEnded = () => setAudioState("IDLE");
+    const handleError = () => setAudioState("IDLE");
+
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("error", handleError);
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("error", handleError);
+      audio.src = "";
+      audioRef.current = null;
+    };
+  }, []);
+
+  const handleTabClick = useCallback(async (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === "resume") {
+      const link = document.createElement("a");
+      link.href = resumePDF;
+      link.download = "Sneha_Kashyap_Resume.pdf";
+      document.body.appendChild(link);
+      link.click();
+      requestAnimationFrame(() => document.body.removeChild(link));
+    } else if (tabId === "intro") {
+      const audio = audioRef.current;
+      if (!audio) return;
+
+      if (audioState === "PLAYING") {
+        audio.pause();
+        setAudioState("PAUSED");
+      } else {
+        try {
+          await audio.play();
+          setAudioState("PLAYING");
+        } catch (err) {
+          console.warn("Audio playback error:", err);
+          setAudioState("IDLE");
+        }
+      }
+    }
+  }, [audioState]);
 
   return (
     <div>
@@ -65,17 +118,38 @@ export default function ContactBoard() {
           className="board-left"
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
         >
-          {TABS.map((tab, i) => (
-            <TactileCard
-              key={tab.id}
-              icon={tab.icon}
-              label={tab.label}
-              subLabel={tab.subLabel}
-              active={activeTab === tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              index={i}
-            />
-          ))}
+          {TABS.map((tab, i) => {
+            let label = tab.label;
+            let ariaLabel = tab.label;
+
+            if (tab.id === "intro") {
+              if (audioState === "PLAYING") {
+                label = "INTRO 🔊";
+                ariaLabel = "Pause introduction";
+              } else if (audioState === "PAUSED") {
+                label = "INTRO ▶";
+                ariaLabel = "Resume introduction";
+              } else {
+                label = "INTRO";
+                ariaLabel = "Play introduction";
+              }
+            } else if (tab.id === "resume") {
+              ariaLabel = "Download Sneha's resume";
+            }
+
+            return (
+              <TactileCard
+                key={tab.id}
+                icon={tab.icon}
+                label={label}
+                subLabel={tab.subLabel}
+                active={activeTab === tab.id}
+                ariaLabel={ariaLabel}
+                onClick={() => handleTabClick(tab.id)}
+                index={i}
+              />
+            );
+          })}
         </motion.div>
 
         {/* ── RIGHT — Display → Social → Form ── */}

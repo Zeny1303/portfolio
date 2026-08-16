@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
  * TactileCard — physical tab/switch with active glow state.
  * Props: icon, label, subLabel, active, onClick, index
  */
-export default function TactileCard({ icon: Icon, label, subLabel, active, onClick, index }) {
+export default function TactileCard({ icon: Icon, label, subLabel, active, ariaLabel, onClick, index }) {
   return (
     <motion.button
       className={`tactile-card ${active ? "tactile-active" : ""}`}
@@ -15,7 +15,7 @@ export default function TactileCard({ icon: Icon, label, subLabel, active, onCli
       whileHover={{ x: 3, transition: { type: "spring", stiffness: 400, damping: 20 } }}
       whileTap={{ scale: 0.94, x: 0 }}
       aria-pressed={active}
-      aria-label={label}
+      aria-label={ariaLabel || label}
     >
       {/* Corner screws */}
       <span className="tc-screw tc-tl" />

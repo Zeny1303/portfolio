@@ -1,0 +1,54 @@
+========================================================================================================================================================================
+                                                      PORTFOLIO PROJECT - ERRORS & TECHNICAL SOLUTIONS LOG
+========================================================================================================================================================================
+
++----+------------------------------------+----------+----------------------------------------------------+----------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
+| ID | Component / Area                   | Layer    | Issue / Error Encountered                          | Root Cause                                                                                         | Solution & Fix Applied                                                                              |
++----+------------------------------------+----------+----------------------------------------------------+----------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
+| 01 | CORS & OPTIONS Preflight           | Backend  | 404 Preflight & CORS Error on Vercel deployment     | Single origin string check threw unhandled Error on CORS preflight, breaking Express response.     | Implemented dynamic Set allowlist + Vercel regex + safe callback(null, false) for OPTIONS handling. |
+| 02 | Contact Form API URL Config        | Frontend | Request sending to localhost:5000 in production    | Hardcoded || "http://localhost:5000" fallback in ContactForm.jsx overriding Vercel env.             | Removed hardcoded fallback; enforced import.meta.env.VITE_API_URL || "" with local .env support.    |
+| 03 | Projects Horizontal Scroll Pinning | Frontend | Card gallery frozen on About page / cards cut off  | GSAP ScrollTrigger bound to window instead of .home-about-container & unobserved async image loads.| Created dynamic scroller resolver, added ResizeObserver & layout refresh timers to update ScrollTrigger|
+| 04 | Resume Download Handling           | Frontend | Page navigation / dependency on backend for PDF    | PDF asset needed clean client-side download without page refresh or backend API dependence.        | Imported Sneha_Resume.pdf as frontend asset & created programmatic link trigger Sneha_Kashyap_Resume.pdf |
+| 05 | Intro Audio State & Memory Leaks   | Frontend | Multiple audio instances & autoplay policy blocks  | Multiple new Audio() calls on render & missing unmount cleanup logic.                              | Single useRef audio instance in useEffect with state machine (IDLE/PLAYING/PAUSED) & unmount cleanup.|
+| 06 | Project Detail Page Overflow       | Frontend | Unable to scroll down on project detail pages      | Global App.css contained body { height: 100vh; overflow: hidden; } blocking document expansion.    | Changed body/root to min-height: 100vh and enabled natural browser document scrolling.               |
++----+------------------------------------+----------+----------------------------------------------------+----------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
+
+========================================================================================================================================================================
+                                                             DETAILED ERROR & SOLUTION DESCRIPTIONS
+========================================================================================================================================================================
+
+1. CORS & OPTIONS Preflight Error (Backend)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Symptom: Vercel frontend requests to POST /api/contact failed with CORS preflight error and 404 preflight status in Chrome DevTools.
+- Root Cause: src/app.js used a single allowed origin string (process.env.FRONTEND_URL). When requests arrived from Vercel preview/production domains, cors callback threw an Error object, causing Express to return a 500 error on preflight OPTIONS requests without setting Access-Control-Allow-Origin headers.
+- Solution: Updated src/app.js with a dynamic origin validator supporting process.env.FRONTEND_URL (comma-separated), an explicit allowlist of Vercel production domains, and a regex matcher for Vercel preview deployments (/^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/). Returned callback(null, false) for non-allowed origins to prevent Express error handling crashes.
+
+2. Production API URL Hardcoded Fallback (Frontend)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Symptom: Contact form was failing in production because browser attempted to send requests to http://localhost:5000/api/contact.
+- Root Cause: ContactForm.jsx contained const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000", which introduced a hardcoded localhost fallback into the compiled bundle.
+- Solution: Updated ContactForm.jsx to const apiUrl = import.meta.env.VITE_API_URL || "";. Kept local development support in frontend .env file (VITE_API_URL=http://localhost:5000), allowing Vercel environment variables to supply the production Render backend URL.
+
+3. Projects Section Horizontal Scroll Pinning & Card Clipping (Frontend)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Symptom: The Projects horizontal card gallery was freezing or getting cut off before reaching the last project card (Nexora) on the About page.
+- Root Cause: GSAP ScrollTrigger scroller property was defaulting to window when embedded inside .home-about-container (a scrollable div). Additionally, asynchronous project image loading changed the total track width after ScrollTrigger had already initialized.
+- Solution: Updated WorkPage.jsx with a helper function getScroller() that dynamically binds to .home-about-container when embedded. Attached a ResizeObserver to the horizontal track element and added multi-stage layout refresh timers (100ms, 400ms, 1000ms) calling ScrollTrigger.refresh().
+
+4. Resume Download Handling (Frontend)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Symptom: Need for instant client-side resume download without navigating away, invoking backend APIs, or opening a new tab.
+- Root Cause: Default anchor links without imported asset references could trigger browser navigation or require backend endpoints.
+- Solution: Imported Sneha_Resume.pdf directly as a static frontend asset module. Programmatically created a temporary <a> element with link.download = "Sneha_Kashyap_Resume.pdf", ensuring clean cross-browser download without navigating away from the portfolio.
+
+5. Intro Audio Autoplay & Memory Lifecycle (Frontend)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Symptom: Risk of browser autoplay policy violations, overlapping audio playback, and unmount audio memory leaks.
+- Root Cause: Creating new Audio() instances on every render or click without event cleanup.
+- Solution: Managed audio via a single useRef instance initialized inside useEffect. Built a 3-state machine (IDLE, PLAYING, PAUSED), handled audio.play() promise rejections gracefully, and implemented strict unmount cleanup (audio.pause(), audio.currentTime = 0, event listener removal).
+
+6. Project Detail Page Vertical Overflow (Frontend)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Symptom: Users could not scroll down to view content on project detail pages like /work/cortex.
+- Root Cause: Global src/App.css enforced body { height: 100vh; overflow: hidden; }, truncating page expansion beyond 1 viewport height.
+- Solution: Updated App.css to body { min-height: 100vh; overflow-x: hidden; }, allowing natural document flow and vertical scrolling across all detailed project sub-pages.

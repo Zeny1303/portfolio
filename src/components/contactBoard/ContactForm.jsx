@@ -276,7 +276,7 @@ export default function ContactForm() {
       return;
     }
 
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+    const apiUrl = import.meta.env.VITE_API_URL || "";
 
     // VOICE SUBMISSION PATH (when audioBlob exists)
     if (audioBlob) {

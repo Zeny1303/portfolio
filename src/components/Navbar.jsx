@@ -55,7 +55,7 @@ export function SiteHeader({ onOpen, activePage, onNavigate }) {
 
         {/* Center Brand Logo */}
         <div className="navbar-logo" onClick={() => handleNav('/', 'Home')}>
-          <span className="logo-brand">SNEHA</span>
+          <span className="logo-brand">Portfolio</span>
         </div>
 
         {/* Right Side Links */}

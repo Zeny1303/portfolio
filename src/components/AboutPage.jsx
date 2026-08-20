@@ -408,21 +408,13 @@ export default function AboutPage() {
                   <div className="journey-content">
                     <div className="journey-card card-purple">
                       <span className="card-label">THE BEGINNING</span>
-                      <h2>I started exploring.</h2>
+                      <h2>Interest in Python & Joining College</h2>
                       <p>
-                        Joined Babu Banarasi Das Institute of Technology and Management for B.Tech in Computer Science Engineering with a Data Science specialization.
+                        Joined Babu Banarasi Das Institute of Technology and Management (BBDNITM) for B.Tech in Computer Science Engineering with a Data Science specialization.
                       </p>
                       <p>
-                        I explored core foundations across <strong>Data Science</strong> and <strong>Web Development</strong>.
+                        Developed a strong passion for <strong>Python programming</strong> and core computer science fundamentals.
                       </p>
-                      <div className="tech-stack">
-                        <span>Python</span>
-                        <span>HTML</span>
-                        <span>CSS</span>
-                        <span>JavaScript</span>
-                        <span>C</span>
-                        <span>C++</span>
-                      </div>
                     </div>
                   </div>
                   <div className="year">2022</div>
@@ -432,21 +424,18 @@ export default function AboutPage() {
                 <article className="journey-row right-row">
                   <div className="journey-content">
                     <div className="journey-card card-green">
-                      <span className="card-label">EXPLORATION</span>
-                      <h2>Finding what interests me.</h2>
+                      <span className="card-label">FOUNDATIONS & FIRST FREELANCE</span>
+                      <h2>DSA in Python, Web Dev & First Freelance Project</h2>
                       <p>
-                        I spent this period experimenting with different areas of technology rather than forcing myself into one direction.
+                        Mastered Data Structures & Algorithms (DSA) in Python, alongside web development fundamentals with HTML, CSS, JavaScript, and React.
                       </p>
-                      <p>
-                        Slowly, I realized that I enjoyed <strong>building things</strong> more than simply studying them.
-                      </p>
-                      <div className="tech-stack">
-                        <span>Machine Learning</span>
-                        <span>Pandas</span>
-                        <span>NumPy</span>
-                        <span>JavaScript</span>
-                        <span>React</span>
+                      <div className="experience">
+                        <div className="experience-title">Freelance Web Developer</div>
+                        <div className="experience-company">Resolute Edu Institute · <a href="https://www.resoluteedu.in/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>resoluteedu.in</a></div>
                       </div>
+                      <p>
+                        Landed and delivered my first freelance project for coaching institute <strong>Resolute Edu Institute</strong> — building their official website, Student Zone, Scholarship Registration (R-NET) flow, and dynamic Course Catalog.
+                      </p>
                     </div>
                   </div>
                   <div className="year">2023–24</div>
@@ -456,54 +445,38 @@ export default function AboutPage() {
                 <article className="journey-row left-row">
                   <div className="journey-content">
                     <div className="journey-card card-orange">
-                      <span className="card-label">THE DIRECTION</span>
-                      <h2>Web development clicked.</h2>
+                      <span className="card-label">BACKEND ENGINEERING</span>
+                      <h2>Deep Dive into Django, DRF & Node.js/Express</h2>
                       <p>
-                        I focused on core Web Development, transitioning from learning technologies to building real-world applications.
+                        Worked hard on backend engineering and server-side software development.
                       </p>
-                      <div className="experience">
-                        <div className="experience-title">Freelance Web Developer</div>
-                        <div className="experience-company">Resolute Edu Institute · Feb 2025 – Jun 2025</div>
-                      </div>
                       <p>
-                        Built the institute's website, Student Zone, Scholarship Registration flow and dynamic Course Catalog.
+                        Deep-dived into <strong>Django</strong>, <strong>Django REST Framework (DRF)</strong>, <strong>Node.js</strong>, <strong>Express.js</strong>, database architecture, and advanced DSA.
                       </p>
-                      <div className="tech-stack">
-                        <span>React</span>
-                        <span>JavaScript</span>
-                        <span>Web Development</span>
-                      </div>
                     </div>
                   </div>
                   <div className="year">2024–25</div>
                 </article>
 
-                {/* 2025 */}
+                {/* 2025 - 2026 */}
                 <article className="journey-row right-row">
                   <div className="journey-content">
                     <div className="journey-card card-blue">
-                      <span className="card-label">REAL SOFTWARE</span>
-                      <h2>From building alone to building with a team.</h2>
+                      <span className="card-label">INDUSTRY EXPERIENCE & GRADUATION</span>
+                      <h2>Software Engineer Intern & Graduation</h2>
                       <div className="experience">
                         <div className="experience-title">Software Engineer Intern</div>
-                        <div className="experience-company">XRG Consulting Private Limited · Sep 2025 – Nov 2025</div>
+                        <div className="experience-company">XRG Consulting Private Limited · Hyderabad, Telangana</div>
                       </div>
                       <p>
-                        Worked on Anvayaa KinCare using React, Tailwind CSS and Django REST APIs.
+                        Worked on Anvayaa KinCare using React, Tailwind CSS, and Django REST APIs in an Agile team. Built reusable UI modules, caregiver scheduling, live dashboards, search/filtering, and pagination.
                       </p>
                       <p>
-                        Built reusable UI modules, integrated APIs, implemented search, filtering, pagination and validation, and collaborated with senior developers and QA engineers.
+                        Successfully graduated on <strong>June 18, 2026</strong>!
                       </p>
-                      <div className="tech-stack">
-                        <span>React</span>
-                        <span>Tailwind CSS</span>
-                        <span>Django</span>
-                        <span>DRF</span>
-                        <span>REST API</span>
-                      </div>
                     </div>
                   </div>
-                  <div className="year">2025</div>
+                  <div className="year">2025–26</div>
                 </article>
 
                 {/* 2026 */}
@@ -511,21 +484,11 @@ export default function AboutPage() {
                   <div className="journey-content">
                     <div className="journey-card card-pink">
                       <span className="card-label">NOW</span>
-                      <h2>The journey continues.</h2>
-                      <p>Graduated on June 18, 2026.</p>
+                      <h2>Graduated & Seeking Fresher Roles</h2>
+                      <p>Graduated on <strong>June 18, 2026</strong>.</p>
                       <p>
-                        Now I'm looking for full-time opportunities where I can continue growing as a <strong>Full Stack / Backend Engineer</strong>.
+                        Now actively seeking full-time opportunities as a <strong>Software Engineer / Full Stack / Backend Engineer</strong>.
                       </p>
-                      <div className="tech-stack">
-                        <span>Python</span>
-                        <span>Django</span>
-                        <span>DRF</span>
-                        <span>Node.js</span>
-                        <span>Express</span>
-                        <span>React</span>
-                        <span>JWT</span>
-                        <span>DSA</span>
-                      </div>
                     </div>
                   </div>
                   <div className="year">2026</div>

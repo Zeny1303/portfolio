@@ -103,7 +103,8 @@ export default function Journey() {
             <path
               d="M 100 50 C 40 180, 160 350, 100 520 C 40 680, 160 780, 100 920 C 40 1080, 160 1180, 100 1320 C 40 1480, 160 1580, 100 1720 C 60 1850, 140 1920, 100 1980"
               stroke="#E4E4E7"
-              strokeWidth="4"
+              strokeWidth="12"
+              vectorEffect="non-scaling-stroke"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -114,7 +115,8 @@ export default function Journey() {
               d="M 100 50 C 40 180, 160 350, 100 520 C 40 680, 160 780, 100 920 C 40 1080, 160 1180, 100 1320 C 40 1480, 160 1580, 100 1720 C 60 1850, 140 1920, 100 1980"
               fill="none"
               stroke="#2938E8"
-              strokeWidth="6"
+              strokeWidth="16"
+              vectorEffect="non-scaling-stroke"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
